@@ -1,0 +1,80 @@
+{
+  "excel": {
+    "checks": {
+      "reader_accepts": true,
+      "chapter_and_meta_sheets_retained": true,
+      "metadata_cells_identical": true,
+      "inactive_content_identical": true,
+      "metadata_hidden": true,
+      "inactive_hidden": true,
+      "edited_description_authoritative": true,
+      "edited_quantity_authoritative": true,
+      "edited_price_authoritative": true,
+      "row_ids_and_types": true,
+      "formulas_preserved": true,
+      "numeric_total": true,
+      "zero_is_zero": true,
+      "included_and_irrelevant": true,
+      "missing_quantity_not_zero": true,
+      "invalid_price_not_zero": true,
+      "round_half_up": true,
+      "partial_sum": true,
+      "no_unexpected_content_changes": true
+    },
+    "passed": 19,
+    "total": 19,
+    "sha256": "7b22a240e04adc53bb0bbbb5d50e689328fd6ec730e4159796ba598a94c18a24",
+    "rtl": [
+      "0"
+    ],
+    "hidden_cols": [
+      [
+        "7",
+        "8"
+      ]
+    ]
+  },
+  "google": {
+    "checks": {
+      "reader_accepts": true,
+      "chapter_and_meta_sheets_retained": true,
+      "metadata_cells_identical": true,
+      "inactive_content_identical": true,
+      "metadata_hidden": true,
+      "inactive_hidden": true,
+      "edited_description_authoritative": true,
+      "edited_quantity_authoritative": true,
+      "edited_price_authoritative": true,
+      "row_ids_and_types": true,
+      "formulas_preserved": true,
+      "numeric_total": true,
+      "zero_is_zero": true,
+      "included_and_irrelevant": true,
+      "missing_quantity_not_zero": true,
+      "invalid_price_not_zero": true,
+      "round_half_up": true,
+      "partial_sum": true,
+      "no_unexpected_content_changes": true
+    },
+    "passed": 19,
+    "total": 19,
+    "sha256": "bdfb00d366f205fa8c801be4aebc1015d77e64a2c09e1bb7654ec6dfb221069a",
+    "rtl": [
+      "0"
+    ],
+    "hidden_cols": [
+      [
+        "7",
+        "8"
+      ]
+    ]
+  },
+  "fault_injection_in_memory": {
+    "missing_meta": "guided_import:metadata_missing",
+    "missing_id": "guided_import:row_id_missing",
+    "duplicate_id": "guided_import:duplicate_row_id",
+    "unknown_schema": "guided_import:unsupported_schema",
+    "renamed_chapter": "guided_import:chapter_missing_or_renamed"
+  },
+  "reference_sha256": "0acba9a7c145136698372b73189efb1f4a24f97281320df3f376213cc39422ba"
+}
