@@ -12,7 +12,7 @@ describe('five available templates',()=>{
     expect(templates.map(templateCounts)).toEqual([
       {chapters:22,items:79,notes:23},
       {chapters:16,items:51,notes:16},{chapters:18,items:60,notes:18},
-      {chapters:21,items:76,notes:21},{chapters:22,items:90,notes:23}
+      {chapters:21,items:80,notes:21},{chapters:22,items:90,notes:23}
     ]);
     expect(()=>createProject({},'unknown')).toThrow();
   });

@@ -35,7 +35,7 @@ for(const id of ['bfresh','oshi_oshi']){
     await page.evaluate(()=>document.fonts.ready);
     const overflow=await page.locator('.boq-content').evaluateAll(items=>items.flatMap((c,i)=>c.scrollHeight>c.clientHeight+3?[i+1]:[]));
     expect(overflow).toEqual([]);
-    const codes=id==='bfresh'?['DE6374','D2178','Glacier White']:['1537T','1067 GV','RAL 1036'];
+    const codes=id==='bfresh'?['DE6374','בירמן 1100','Glacier White','הקמת מחיצת פנים בגובה מלא','אספקה והתקנת הנמכת תקרת גבס','ביצוע תאורת חירום','חיפוי קיר באזור']:['1537T','1067 GV','RAL 1036'];
     for(const code of codes)await expect(page.locator('.boq-page').filter({hasText:code}).first()).toBeVisible();
     await page.getByRole('button',{name:'חזרה לעריכה',exact:true}).click();
     await page.getByRole('button',{name:'ייצוא',exact:true}).click();

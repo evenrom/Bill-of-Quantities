@@ -7,6 +7,7 @@ playwright-report
 dist
 docs/**
 !docs/BOQ_TEMPLATE_SPEC.md
+!docs/BFRESH_QA_APPROVED_20261028.md
 scripts
 README.md
 PRD_BOQ.md

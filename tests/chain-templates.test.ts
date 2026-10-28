@@ -16,7 +16,7 @@ describe('approved chain specifications 2026-10-28',()=>{
       'tiling.tilePublic':['80×80','2 מ״מ','רובה אפורה'],
       'painting.paintWall':['Dunn Edwards Paints DE6374'],
       'painting.paintWave':['RAL 5012','שמן מט משי'],
-      'joinery.counterInner':['18 מ״מ','D2178','נירוסטה מוברשת'],
+      'joinery.counterInner':['18 מ"מ','בירמן 1100'],
       'joinery.counterTop':['במבוק','2 ס״מ','26 ס״מ','15%'],
       'joinery.brandBacking':['40×40','60×20','MDF','RAL 5012'],
       'metalwork.alucobondSmooth':['חלקים','42 ס״מ','2 ס״מ','RAL 5012'],
@@ -48,7 +48,7 @@ describe('approved chain specifications 2026-10-28',()=>{
     expect(row('oshi_oshi.tiling.tileWork').description).toContain('{אישור לפרויקט לפי OS-07}');
     expect(row('oshi_oshi.painting.paintCeiling').description).not.toContain('0515');
   });
-  for(const [id,oldItems,newItems] of [['bfresh',66,76],['oshi_oshi',83,90]] as const){
+  for(const [id,oldItems,newItems] of [['bfresh',66,80],['oshi_oshi',83,90]] as const){
     it(`${id}: existing saved projects remain unchanged after the base update`,async()=>{
       const bytes=readFileSync(`tests/fixtures/${id}-before-chain-update.xlsx`),{project}=await decodeProject(bytes as never);
       expect(project.chapters.flatMap(c=>c.rows).filter(r=>r.kind==='item')).toHaveLength(oldItems);
@@ -66,7 +66,7 @@ describe('approved chain specifications 2026-10-28',()=>{
         s.eachRow(r=>{if(['item','note'].includes(String(r.getCell(8).value)))content.push({description:r.getCell(2).value,unit:r.getCell(3).value??''});});
         expect(content).toEqual(c.rows.map(r=>({description:r.description,unit:r.unit})));
       });
-      const print=renderDocument(p);for(const token of id==='bfresh'?['D2178','DE6374','Glacier White']:['1067 GV','RAL 1036','1537T'])expect(print).toContain(token);
+      const print=renderDocument(p);for(const token of id==='bfresh'?['בירמן 1100','DE6374','Glacier White']:['1067 GV','RAL 1036','1537T'])expect(print).toContain(token);
       expect(print).not.toContain('<mark');
     });
   }
