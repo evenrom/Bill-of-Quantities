@@ -2,9 +2,9 @@
   "url": "https://bill-of-quantities-beta.vercel.app",
   "anonymousStatus": 302,
   "authenticatedStatus": 200,
-  "templates": 6,
+  "templates": 5,
   "manifest": {
-    "name": "כתבי כמויות — משרד עיצוב פנים",
+    "name": "כתבי כמויות",
     "display": "standalone",
     "dir": "rtl"
   },

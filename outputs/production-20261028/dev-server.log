@@ -42,3 +42,8 @@
 13:56:15 [vite] (client) page reload outputs/deployment-20261028/live-index.html
 13:57:38 [vite] (client) page reload outputs/deployment-20261028/production-index.html
 13:59:16 [vite] (client) page reload outputs/deployment-20261028/production-index.html
+14:55:56 [vite] (client) page reload src/templates.ts
+14:55:56 [vite] (client) page reload src/data/restaurant.json
+14:55:56 [vite] (client) page reload src/model.ts
+14:55:56 [vite] (client) page reload src/workbook.ts
+14:55:56 [vite] (client) page reload src/main.tsx
