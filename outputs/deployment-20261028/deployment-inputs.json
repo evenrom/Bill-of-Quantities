@@ -1,0 +1,484 @@
+{
+  "framework": {
+    "name": "Vite",
+    "slug": "vite"
+  },
+  "basePath": "C:\\Users\\Rom\\Documents\\GitHub\\Bill-of-Quantities",
+  "fileCount": 53,
+  "totalSize": 1216344,
+  "ignoredCount": 28,
+  "ignored": [
+    ".git",
+    ".gitignore",
+    "PRD_BOQ.md",
+    "README.md",
+    "dist",
+    "docs\\BOQ_FILE_FORMAT.md",
+    "docs\\BOQ_FORMAT_COMPATIBILITY_REPORT.md",
+    "docs\\CHAIN_TEMPLATE_IMPLEMENTATION_20261028.md",
+    "docs\\CHAIN_TEMPLATE_REVIEW.md",
+    "docs\\DEPLOYMENT_CHECKLIST.md",
+    "docs\\FEEDBACK_FIXES_20261027.md",
+    "docs\\IMPLEMENTATION_REVIEW_20261028.md",
+    "docs\\IMPLEMENTATION_STAGE_1.md",
+    "docs\\TEMPLATES_STAGE_20261028.md",
+    "docs\\UI_FEEDBACK_20261028.md",
+    "docs\\WORKBOOK_SCHEMA_V1.md",
+    "docs\\WORKBOOK_SCHEMA_V2.md",
+    "docs\\WORKBOOK_SCHEMA_V3.md",
+    "docs\\WORKBOOK_SCHEMA_V4.md",
+    "docs\\WORK_PLAN_20261028.md",
+    "docs\\references",
+    "e2e",
+    "node_modules",
+    "outputs",
+    "public\\branding\\README.md",
+    "scripts",
+    "test-results",
+    "tsconfig.tsbuildinfo"
+  ],
+  "directories": [
+    {
+      "path": "docs",
+      "fileCount": 1,
+      "size": 389702
+    },
+    {
+      "path": "src",
+      "fileCount": 26,
+      "size": 385769
+    },
+    {
+      "path": "tests",
+      "fileCount": 13,
+      "size": 225825
+    },
+    {
+      "path": "package-lock.json",
+      "fileCount": 1,
+      "size": 151868
+    },
+    {
+      "path": "public",
+      "fileCount": 5,
+      "size": 60522
+    },
+    {
+      "path": "package.json",
+      "fileCount": 1,
+      "size": 712
+    },
+    {
+      "path": "vercel.json",
+      "fileCount": 1,
+      "size": 547
+    },
+    {
+      "path": "index.html",
+      "fileCount": 1,
+      "size": 442
+    },
+    {
+      "path": "playwright.config.ts",
+      "fileCount": 1,
+      "size": 356
+    },
+    {
+      "path": "tsconfig.json",
+      "fileCount": 1,
+      "size": 322
+    },
+    {
+      "path": ".vercelignore",
+      "fileCount": 1,
+      "size": 165
+    },
+    {
+      "path": "vitest.config.ts",
+      "fileCount": 1,
+      "size": 114
+    }
+  ],
+  "largestFiles": [
+    {
+      "path": "docs/BOQ_TEMPLATE_SPEC.md",
+      "size": 389702,
+      "mode": 33206,
+      "sha": "5b3a0da4b05a3e645cc4c1f8a89f104778dbda13"
+    },
+    {
+      "path": "package-lock.json",
+      "size": 151868,
+      "mode": 33206,
+      "sha": "ed30be3457783937186a4cf40732daa77d929193"
+    },
+    {
+      "path": "tests/fixtures/oshi_oshi-before-chain-update.xlsx",
+      "size": 71964,
+      "mode": 33206,
+      "sha": "ce823b7a4bee1f529b0c487cbc26009c0e556c20"
+    },
+    {
+      "path": "tests/fixtures/bfresh-before-chain-update.xlsx",
+      "size": 65369,
+      "mode": 33206,
+      "sha": "48db7e410dc4e7ecffee5e8388e53fa6cb165e72"
+    },
+    {
+      "path": "src/data/oshi_oshi.json",
+      "size": 54420,
+      "mode": 33206,
+      "sha": "23989a87f3773bd395c359a3371d70d51af79717"
+    },
+    {
+      "path": "tests/fixtures/legacy-v1.xlsx",
+      "size": 53067,
+      "mode": 33206,
+      "sha": "ddcf0bb93fc461e1ccfcd0988797d42f8d8275e7"
+    },
+    {
+      "path": "public/branding/office-logo.png",
+      "size": 50883,
+      "mode": 33206,
+      "sha": "226b5313e37f0887a4f290eb966ab212dfd46f8e"
+    },
+    {
+      "path": "src/data/bfresh.json",
+      "size": 47410,
+      "mode": 33206,
+      "sha": "e3b92d44936549aa5c3ecd8dcb23c31a4649bd96"
+    },
+    {
+      "path": "src/data/restaurant.json",
+      "size": 46114,
+      "mode": 33206,
+      "sha": "180a4842ca1f12b1780f6518956b044dd4420f1d"
+    },
+    {
+      "path": "src/data/kiosk.json",
+      "size": 36714,
+      "mode": 33206,
+      "sha": "7aa93324becb408ccadbe6b7a01d307de091c35a"
+    }
+  ],
+  "files": [
+    {
+      "path": ".vercelignore",
+      "size": 165,
+      "mode": 33206,
+      "sha": "4a0ab485c934a6ca826ebc8793a663daed80fbaf"
+    },
+    {
+      "path": "docs/BOQ_TEMPLATE_SPEC.md",
+      "size": 389702,
+      "mode": 33206,
+      "sha": "5b3a0da4b05a3e645cc4c1f8a89f104778dbda13"
+    },
+    {
+      "path": "index.html",
+      "size": 442,
+      "mode": 33206,
+      "sha": "b32da856e8eb938f02a7ce7af66c261a9d32e56f"
+    },
+    {
+      "path": "package-lock.json",
+      "size": 151868,
+      "mode": 33206,
+      "sha": "ed30be3457783937186a4cf40732daa77d929193"
+    },
+    {
+      "path": "package.json",
+      "size": 712,
+      "mode": 33206,
+      "sha": "6ab5640398b50c7d80a53a54dd90343de4f6eb71"
+    },
+    {
+      "path": "playwright.config.ts",
+      "size": 356,
+      "mode": 33206,
+      "sha": "cdb864b2ac690c3a163d03de52b5da8e8833e1cb"
+    },
+    {
+      "path": "public/branding/app-icon-192.png",
+      "size": 2192,
+      "mode": 33206,
+      "sha": "0d12bbf70ee6225e55380d2f6d4357217194aeae"
+    },
+    {
+      "path": "public/branding/app-icon-512.png",
+      "size": 6447,
+      "mode": 33206,
+      "sha": "a92b8c2ec3663073bef0c140efffef3210022e74"
+    },
+    {
+      "path": "public/branding/app-icon.svg",
+      "size": 266,
+      "mode": 33206,
+      "sha": "07546cd24a0e9e017041ec6e786a5e3d4398cd37"
+    },
+    {
+      "path": "public/branding/office-logo.png",
+      "size": 50883,
+      "mode": 33206,
+      "sha": "226b5313e37f0887a4f290eb966ab212dfd46f8e"
+    },
+    {
+      "path": "public/manifest.webmanifest",
+      "size": 734,
+      "mode": 33206,
+      "sha": "466e6bc3297c9a3636a1bbadb099901458539425"
+    },
+    {
+      "path": "src/branding.ts",
+      "size": 817,
+      "mode": 33206,
+      "sha": "2b9ce54a0aede5cbcec32b1197202980e20da638"
+    },
+    {
+      "path": "src/data/apartment.json",
+      "size": 31403,
+      "mode": 33206,
+      "sha": "f98e8e2e05ce90517b2d1fdb813ab715275e647f"
+    },
+    {
+      "path": "src/data/bfresh.json",
+      "size": 47410,
+      "mode": 33206,
+      "sha": "e3b92d44936549aa5c3ecd8dcb23c31a4649bd96"
+    },
+    {
+      "path": "src/data/kiosk.json",
+      "size": 36714,
+      "mode": 33206,
+      "sha": "7aa93324becb408ccadbe6b7a01d307de091c35a"
+    },
+    {
+      "path": "src/data/oshi_oshi.json",
+      "size": 54420,
+      "mode": 33206,
+      "sha": "23989a87f3773bd395c359a3371d70d51af79717"
+    },
+    {
+      "path": "src/data/private_house.json",
+      "size": 36285,
+      "mode": 33206,
+      "sha": "57d892609aa2271137ac16486a379423415b70a9"
+    },
+    {
+      "path": "src/data/restaurant.json",
+      "size": 46114,
+      "mode": 33206,
+      "sha": "180a4842ca1f12b1780f6518956b044dd4420f1d"
+    },
+    {
+      "path": "src/editor.ts",
+      "size": 4213,
+      "mode": 33206,
+      "sha": "758e40bbcb3f7f0f047cf2b5430c144f78b68301"
+    },
+    {
+      "path": "src/export.ts",
+      "size": 800,
+      "mode": 33206,
+      "sha": "6693d6726c5809af22169d2f8d888fa886ed406d"
+    },
+    {
+      "path": "src/files.ts",
+      "size": 2978,
+      "mode": 33206,
+      "sha": "937bbfba75320add0c51bce1393385d4c3b27ef4"
+    },
+    {
+      "path": "src/IconButton.tsx",
+      "size": 926,
+      "mode": 33206,
+      "sha": "9de4033b129a180a1c12db6fc5b30c11f9993aa4"
+    },
+    {
+      "path": "src/importer.ts",
+      "size": 5883,
+      "mode": 33206,
+      "sha": "83713e06894edde7aee5255e2617c65b64dca82a"
+    },
+    {
+      "path": "src/ImportWizard.tsx",
+      "size": 5668,
+      "mode": 33206,
+      "sha": "122b6fb9fd8ea446be63155620223dd0b2d578bb"
+    },
+    {
+      "path": "src/InstallApp.tsx",
+      "size": 1269,
+      "mode": 33206,
+      "sha": "1a7fb794d5f2e1f3baf7cd22ee61fabd53af4818"
+    },
+    {
+      "path": "src/layout.ts",
+      "size": 3486,
+      "mode": 33206,
+      "sha": "e877e4a74e0a83f03a77c513cfe6f456deefdfe1"
+    },
+    {
+      "path": "src/main.tsx",
+      "size": 25961,
+      "mode": 33206,
+      "sha": "8e28d706bf874fb7f8bf0289b757f1b38e73c26a"
+    },
+    {
+      "path": "src/markers.ts",
+      "size": 139,
+      "mode": 33206,
+      "sha": "ea9db2e1d7bba0d9fd5e8a1403004f49782ff2ff"
+    },
+    {
+      "path": "src/model.ts",
+      "size": 5014,
+      "mode": 33206,
+      "sha": "9f29bedcc5cde5899c53ab8c1990d23eb9b471c5"
+    },
+    {
+      "path": "src/print.ts",
+      "size": 9933,
+      "mode": 33206,
+      "sha": "e6215c41e16ea2b14890424f683fc6c0e5297812"
+    },
+    {
+      "path": "src/Production.tsx",
+      "size": 4139,
+      "mode": 33206,
+      "sha": "d510236bafb9bb78a9d18722b796c833224a866e"
+    },
+    {
+      "path": "src/ProposalReview.tsx",
+      "size": 2810,
+      "mode": 33206,
+      "sha": "448c1a9b8d3f5a5a5a9b3c33d51538ba6834b394"
+    },
+    {
+      "path": "src/proposals.ts",
+      "size": 3107,
+      "mode": 33206,
+      "sha": "b806bcd3ec3f63eb0f4beaab2ca2db2d0bca54f9"
+    },
+    {
+      "path": "src/RowTools.tsx",
+      "size": 5807,
+      "mode": 33206,
+      "sha": "f0836204485723687206e72bca3783a455ba3ee2"
+    },
+    {
+      "path": "src/style.css",
+      "size": 22317,
+      "mode": 33206,
+      "sha": "962a51b6c02a95c0d9c8751f577c6b15b47679f8"
+    },
+    {
+      "path": "src/templates.ts",
+      "size": 601,
+      "mode": 33206,
+      "sha": "97b11541723408ff976de2936e7e98be5dcb7ddd"
+    },
+    {
+      "path": "src/workbook.ts",
+      "size": 27555,
+      "mode": 33206,
+      "sha": "f01de2197fa82311b73bc5908f65b1f2e3933c7e"
+    },
+    {
+      "path": "tests/chain-templates.test.ts",
+      "size": 5317,
+      "mode": 33206,
+      "sha": "7ad67f7c9b2b4c73c8e912b928a755e5ef6a57dd"
+    },
+    {
+      "path": "tests/custom-templates.test.ts",
+      "size": 3603,
+      "mode": 33206,
+      "sha": "8c3b12e24896901cf5e2e6b7a0bb6b5eae885f96"
+    },
+    {
+      "path": "tests/editing.test.ts",
+      "size": 1602,
+      "mode": 33206,
+      "sha": "a017be05ce21db2cc3f112310c5387a9ea45d91c"
+    },
+    {
+      "path": "tests/editor.test.ts",
+      "size": 2065,
+      "mode": 33206,
+      "sha": "069af40e43423062292c717e4d363886b03f05fc"
+    },
+    {
+      "path": "tests/files.test.ts",
+      "size": 2767,
+      "mode": 33206,
+      "sha": "6a0a7e5514c93a3f8f3252faeb30ab004ad747c0"
+    },
+    {
+      "path": "tests/fixtures/bfresh-before-chain-update.xlsx",
+      "size": 65369,
+      "mode": 33206,
+      "sha": "48db7e410dc4e7ecffee5e8388e53fa6cb165e72"
+    },
+    {
+      "path": "tests/fixtures/legacy-v1.xlsx",
+      "size": 53067,
+      "mode": 33206,
+      "sha": "ddcf0bb93fc461e1ccfcd0988797d42f8d8275e7"
+    },
+    {
+      "path": "tests/fixtures/oshi_oshi-before-chain-update.xlsx",
+      "size": 71964,
+      "mode": 33206,
+      "sha": "ce823b7a4bee1f529b0c487cbc26009c0e556c20"
+    },
+    {
+      "path": "tests/importer.test.ts",
+      "size": 1053,
+      "mode": 33206,
+      "sha": "884ffbb14f9c2c08210a236151ae1767245cd734"
+    },
+    {
+      "path": "tests/model.test.ts",
+      "size": 1946,
+      "mode": 33206,
+      "sha": "37c1a220a5ea5df8891508906096b51e9635f289"
+    },
+    {
+      "path": "tests/production.test.ts",
+      "size": 3869,
+      "mode": 33206,
+      "sha": "74fff9fa0da80749e6a4fb0cc84fbd4cae8ba7c2"
+    },
+    {
+      "path": "tests/templates.test.ts",
+      "size": 3189,
+      "mode": 33206,
+      "sha": "230bc1258f9cb0ce1eaddb773e72c45971df9932"
+    },
+    {
+      "path": "tests/workbook.test.ts",
+      "size": 10014,
+      "mode": 33206,
+      "sha": "765c23909f8467107cf6dca51a20a13012da3b52"
+    },
+    {
+      "path": "tsconfig.json",
+      "size": 322,
+      "mode": 33206,
+      "sha": "76ee0bed390e51630330f8a30f0b5aaee0cb6fa2"
+    },
+    {
+      "path": "vercel.json",
+      "size": 547,
+      "mode": 33206,
+      "sha": "30e365f7a6a36854a4af0aced8126918f380a700"
+    },
+    {
+      "path": "vitest.config.ts",
+      "size": 114,
+      "mode": 33206,
+      "sha": "50479634898a9b737c8f245f22722e7fe7ef5f1f"
+    }
+  ]
+}

@@ -1,7 +1,8 @@
 param(
   [string]$InputPath = 'outputs/implementation-20261027/browser-roundtrip.xlsx',
   [string]$OutputPath = 'outputs/review-20261027/excel-layout.pdf',
-  [switch]$LargeAmounts
+  [switch]$LargeAmounts,
+  [string]$RoundtripOutput = ''
 )
 $ErrorActionPreference='Stop'
 $source=(Resolve-Path -LiteralPath $InputPath).Path
@@ -13,7 +14,9 @@ try {
   $book=$excel.Workbooks.Open($source,0,$true)
   $excel.CalculateFull()
   # Mutate only the disposable in-memory copy. Confirm the live calculation chain.
-  $chapter=$book.Worksheets.Item(5)
+  $chapter=$null
+  foreach($candidate in $book.Worksheets){if($candidate.Visible -eq -1 -and $candidate.Range('H1').Value2 -eq 'chapter'){$chapter=$candidate;break}}
+  if(!$chapter){throw 'No active chapter found'}
   $chapter.Activate()
   $summary=$book.Worksheets.Item($book.Worksheets.Count)
   $originalPrice=$chapter.Range('E4').Value2
@@ -37,6 +40,7 @@ try {
   if([Math]::Abs($summary.Range('E14').Value2-1.8) -gt 0.000001){throw 'VAT recalculation failed'}
   if([Math]::Abs($summary.Range('E15').Value2-11.8) -gt 0.000001){throw 'Grand total recalculation failed'}
   $chapter.Range('E4').Value2=$originalPrice
+  if($RoundtripOutput){$excel.CalculateFull();$roundtrip=[IO.Path]::GetFullPath((Join-Path (Get-Location) $RoundtripOutput));$book.SaveCopyAs($roundtrip)}
   foreach($address in @('A4','B4','C4','D4','E4','F4')){
     if($chapter.Range($address).VerticalAlignment -ne -4160){throw "Expected top alignment: $address"}
   }

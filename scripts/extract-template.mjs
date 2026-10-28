@@ -2,8 +2,13 @@
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import assert from 'node:assert/strict';
 const spec = readFileSync('docs/BOQ_TEMPLATE_SPEC.md', 'utf8');
-const section = spec.split('## 4 תבנית מסעדה')[1].split('## 5 תבנית דוכן')[0];
-const instructions = section.split('### שער והנחיות כלליות')[1].split('### פירוק והריסה')[0]
+const definitions=[['restaurant','מסעדה',22,9,79,23],['kiosk','דוכן',20,6,60,20],['apartment','דירה',16,10,51,16],['private_house','בית פרטי',18,9,60,18],['bfresh','ביפרש',21,7,76,21],['oshi_oshi','אושי־אושי',22,9,90,23]];
+// Optional IDs limit writes, so a chain-only revision cannot rewrite other templates.
+const selected=process.argv.slice(2);
+for(const id of selected)assert.ok(definitions.some(d=>d[0]===id),`Unknown template: ${id}`);
+const templates=definitions.map(([id,name,chapterCount,activeCount,itemCount,noteCount],index)=>{
+const section = spec.split(`## ${index+4} תבנית ${name}`)[1].split(/^## /m)[0];
+const instructions = section.split('### שער והנחיות כלליות')[1].split(/^### /m)[0]
   .split(/\r?\n/).filter(l => /^\d+\. /.test(l)).join('\n');
 const chapters = section.split(/^### /m).slice(1).filter(s => s.includes('מזהה פרק:')).map(s => {
   const title = s.split(/\r?\n/)[0];
@@ -21,10 +26,15 @@ const chapters = section.split(/^### /m).slice(1).filter(s => s.includes('מזה
   });
   return {sourceId, title, active:state === 'פעיל.', rows};
 });
-assert.equal(chapters.length,22);
-assert.equal(chapters.filter(c => c.active).length,9);
+assert.equal(chapters.length,chapterCount);
+assert.equal(chapters.filter(c => c.active).length,activeCount);
 const counts = {chapters:chapters.length, items:chapters.flatMap(c=>c.rows).filter(r=>r.kind==='item').length, notes:chapters.flatMap(c=>c.rows).filter(r=>r.kind==='note').length};
-assert.equal(counts.items,79); assert.equal(counts.notes,23);
+assert.equal(counts.items,itemCount); assert.equal(counts.notes,noteCount);
+assert.ok(instructions.length,name);
+console.log(name,counts);
+return {id,name,instructions,chapters};
+});
+const sourceIds=templates.flatMap(t=>t.chapters.flatMap(c=>[c.sourceId,...c.rows.map(r=>r.sourceId)]));
+assert.equal(sourceIds.length,656);assert.equal(new Set(sourceIds).size,656);
 mkdirSync('src/data',{recursive:true});
-writeFileSync('src/data/restaurant.json', JSON.stringify({id:'restaurant',name:'מסעדה',instructions,chapters},null,2)+'\n');
-console.log(counts);
+for(const template of templates.filter(t=>!selected.length||selected.includes(t.id)))writeFileSync(`src/data/${template.id}.json`,JSON.stringify(template,null,2)+'\n');

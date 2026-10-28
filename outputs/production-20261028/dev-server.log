@@ -1,0 +1,44 @@
+
+  VITE v7.3.7  ready in 163 ms
+
+  ➜  Local:   http://127.0.0.1:5174/
+  ➜  press h + enter to show help
+10:25:41 [vite] (client) page reload src/workbook.ts
+10:28:31 [vite] (client) page reload src/model.ts
+10:28:31 [vite] (client) page reload src/workbook.ts
+10:28:31 [vite] (client) page reload src/editor.ts
+10:28:31 [vite] (client) page reload src/main.tsx
+10:32:43 [vite] (client) page reload src/main.tsx
+10:58:46 [vite] (client) page reload src/main.tsx
+10:59:37 [vite] (client) page reload src/RowTools.tsx
+10:59:37 [vite] (client) page reload src/main.tsx
+10:59:37 [vite] (client) page reload src/files.ts
+10:59:37 [vite] (client) page reload src/Production.tsx
+10:59:37 [vite] (client) page reload src/print.ts
+11:00:32 [vite] (client) hmr update /src/style.css
+11:02:20 [vite] (client) page reload src/Production.tsx
+11:02:20 [vite] (client) page reload src/InstallApp.tsx
+11:05:16 [vite] (client) page reload src/main.tsx
+11:05:16 [vite] (client) hmr update /src/style.css
+11:08:22 [vite] (client) page reload src/files.ts
+11:08:22 [vite] (client) page reload src/main.tsx
+11:11:25 [vite] (client) page reload src/main.tsx
+11:11:25 [vite] (client) hmr update /src/style.css
+11:21:15 [vite] (client) page reload src/RowTools.tsx
+11:21:15 [vite] (client) page reload src/main.tsx
+11:21:15 [vite] (client) hmr update /src/style.css
+11:23:12 [vite] (client) page reload src/main.tsx
+11:34:32 [vite] (client) page reload src/main.tsx
+11:34:32 [vite] (client) page reload index.html
+11:34:32 [vite] (client) hmr update /src/style.css
+12:18:28 [vite] (client) page reload src/data/bfresh.json
+12:18:28 [vite] (client) page reload src/data/oshi_oshi.json
+12:26:53 [vite] (client) page reload src/main.tsx
+12:26:53 [vite] (client) hmr update /src/style.css
+13:53:20 [vite] .env.local changed, restarting server...
+13:53:20 [vite] server restarted.
+13:53:25 [vite] (client) page reload outputs/deployment-20261028/live-index.html
+13:55:37 [vite] (client) page reload index.html
+13:56:15 [vite] (client) page reload outputs/deployment-20261028/live-index.html
+13:57:38 [vite] (client) page reload outputs/deployment-20261028/production-index.html
+13:59:16 [vite] (client) page reload outputs/deployment-20261028/production-index.html

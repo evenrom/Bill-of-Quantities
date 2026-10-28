@@ -1,0 +1,12 @@
+{
+  "src/data/restaurant.json": "9b38bfd4b75e95198c264d35a1f226e1e6c0183bcca88947df77a9338e1c54c0",
+  "src/data/kiosk.json": "75c157a4016535193978f03e71c33afb333a140a4cf8249d841ef99a93b522cd",
+  "src/data/apartment.json": "1bb4e00b4ece9b63e9cc96ca025c731f8390153eeeb345946fa163a1261be73d",
+  "src/data/private_house.json": "5a2c25af1538c5e47f41388b47162d3a44ef516936904560a57916f0eff28e8d",
+  "src/style.css": "0fe67208076e7cf90bfa0fcf19403e138127ba829fbe2b0d6f98d68b8a90bc40",
+  "src/main.tsx": "3505ff000cb9647b1107d8fa47cd5fd12c8f4492510fb06d245da25425b1acc3",
+  "src/model.ts": "ac69c695b42effcbc429db3f778ee2127392480abd24ec40ac1f088344ab263b",
+  "src/workbook.ts": "b90d9e63357de0febfb3d4a04f8bd614100039e32b2d4e9f5424ba6959516a21",
+  "src/layout.ts": "4e9998865d458a8fb7c78e43100a47c46fa04fe517882c2cb604ed04b72ce98f",
+  "src/print.ts": "40330db74e93b1009c03d153b718661d940c161fbfa112c6fe7adea45d164d3b"
+}

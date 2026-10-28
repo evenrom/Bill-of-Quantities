@@ -5,8 +5,8 @@ import {layoutDocument, textHeight, PAGE_HEIGHT, COLUMN_WIDTHS} from './layout';
 
 // This is a product codec, independent of the format-probe experiment.
 export const SIGNATURE = 'BOQ_WORKBOOK';
-export const SCHEMA = 3;
-export class RecoveryRequired extends Error {}
+export const SCHEMA = 4;
+export class RecoveryRequired extends Error {sourceFile?:File}
 const fail = (message: string): never => { throw new RecoveryRequired(message); };
 const fields = ['title','client','location','date','revision','instructions','office','contractor','vat'] as const;
 export const itemFormula = (n: number) => `IF(ISBLANK(D${n}),"",IF(NOT(ISNUMBER(D${n})),"קלט לא תקין",IF(D${n}<0,"קלט לא תקין",IF(ISBLANK(E${n}),"",IF(OR(E${n}="כלול",E${n}="לא רלוונטי"),0,IF(NOT(ISNUMBER(E${n})),"קלט לא תקין",IF(E${n}<0,"קלט לא תקין",ROUND(D${n}*E${n},2))))))))`;
@@ -50,7 +50,8 @@ function uniqueName(title:string,used:Set<string>) {
   used.add(result.toLocaleLowerCase());return result;
 }
 type FieldMap=Record<string,{sheet:string;cell:string}[]>;
-export async function encodeProject(project: Project): Promise<Uint8Array> {
+export async function encodeProject(project: Project,contractor=false): Promise<Uint8Array> {
+  if(project.kind==='template'&&(project.client||project.location||project.date||project.revision||project.contractor||project.chapters.some(c=>c.rows.some(r=>r.quantity!==null||r.price!==null))))throw new Error('תבנית אינה יכולה להכיל כמויות, מחירים או פרטי פרויקט.');
   if(typeof document!=='undefined')await document.fonts.ready;
   const ExcelJS=(await import('exceljs')).default;
   const book = new ExcelJS.Workbook(); book.calcProperties.fullCalcOnLoad=true;
@@ -100,8 +101,8 @@ export async function encodeProject(project: Project): Promise<Uint8Array> {
   });
   toc.pageSetup.printArea=`A1:F${toc.rowCount}`;toc.pageSetup.firstPageNumber=2;
   const meta=book.addWorksheet('_BOQ_META'); meta.state='hidden';
-  meta.addRow([SIGNATURE,SCHEMA,project.kind,project.id,project.revisionId,project.templateId,JSON.stringify(project.chapters.map(c=>c.id))]);
-  meta.addRow(['layout',JSON.stringify(project.layout),null,project.logo?JSON.stringify({width:project.logo.width,height:project.logo.height}):null]);
+  meta.addRow([SIGNATURE,SCHEMA,contractor?'contractor':project.kind,project.id,project.revisionId,project.templateId,JSON.stringify(project.chapters.map(c=>c.id))]);
+  meta.addRow(['layout',JSON.stringify(project.layout),null,project.logo?JSON.stringify({width:project.logo.width,height:project.logo.height,sha256:await logoDigest(project.logo.data),...(project.logo.reviewRequired?{reviewRequired:true}:{})}):null]);
   meta.addRow(['chapterId','sheet','active','rowIds']);
   const numbers=numbering(project);
   const used=new Set(book.worksheets.map(s=>s.name.toLocaleLowerCase()));used.add('ריכוז עלויות');
@@ -128,7 +129,7 @@ export async function encodeProject(project: Project): Promise<Uint8Array> {
       sheet.getRow(n).height=height;
       if(row.kind==='item') {
         itemRows.push(n);
-        sheet.getCell(n,6).value={formula:itemFormula(n),result:rowTotal(row)??''};
+        if(project.kind==='project')sheet.getCell(n,6).value={formula:itemFormula(n),result:rowTotal(row)??''};
         sheet.getCell(n,4).dataValidation={type:'decimal',operator:'greaterThanOrEqual',formulae:[0],allowBlank:true,showErrorMessage:true,error:'יש להזין מספר לא שלילי'};
         sheet.getCell(n,5).dataValidation={type:'custom',formulae:[`OR(ISBLANK(E${n}),AND(ISNUMBER(E${n}),E${n}>=0),E${n}="כלול",E${n}="לא רלוונטי")`],allowBlank:true,showErrorMessage:true,error:'מספר לא שלילי, כלול או לא רלוונטי בלבד'};
       }
@@ -136,7 +137,7 @@ export async function encodeProject(project: Project): Promise<Uint8Array> {
       const last=pageIndex===pages.length-1;
       if(last)writeFrozenBefore(Infinity);
       pad(sheet,PAGE_HEIGHT-64-page.used-(last?32:0));
-      if(last){const total=chapterTotal(chapter);const n=sheet.rowCount+1;sheet.addRow([null,`${total.partial?'סיכום חלקי':'סה״כ'} פרק ${numbers.chapters.get(chapter.id)??''} להעברה`,null,null,null,{formula:totalFormula(itemRows),result:total.value},null,'total']);sheet.mergeCells(n,2,n,5);sheet.getRow(n).height=32;}
+      if(last){const total=chapterTotal(chapter);const n=sheet.rowCount+1;sheet.addRow([null,`${project.kind==='project'&&total.partial?'סיכום חלקי':'סה״כ'} פרק ${numbers.chapters.get(chapter.id)??''} להעברה`,null,null,null,project.kind==='project'?{formula:totalFormula(itemRows),result:total.value}:null,null,'total']);sheet.mergeCells(n,2,n,5);sheet.getRow(n).height=32;}
       frame(sheet,first+1,sheet.rowCount);
       if(last)for(let c=1;c<=6;c++)sheet.getCell(sheet.rowCount,c).border={...sheet.getCell(sheet.rowCount,c).border,top:border};
       for(let c=1;c<=6;c++)sheet.getCell(first+1,c).border={...sheet.getCell(first+1,c).border,bottom:border};
@@ -151,9 +152,16 @@ export async function encodeProject(project: Project): Promise<Uint8Array> {
     sheet.pageSetup.firstPageNumber=start||1;
     meta.addRow([chapter.id,sheet.name,chapter.active?1:0,JSON.stringify(chapter.rows.map(r=>r.id))]);
   });
-  const summary=book.addWorksheet('ריכוז עלויות');styleSheet(summary);band(summary,1,'ריכוז עלויות',40);
-  summary.addRow(['פרק','תיאור',null,null,'סה״כ']);summary.mergeCells('B2:D2');summary.mergeCells('E2:F2');summary.getRow(2).height=30;
-  totals.forEach((t,i)=>{const n=i+3;summary.addRow([i+1,t.title,null,null,{formula:`'${t.sheet.replaceAll("'","''")}'!F${t.row}`,result:t.value}]);summary.mergeCells(n,2,n,4);summary.mergeCells(n,5,n,6);summary.getRow(n).height=24;});
+  const summary=book.addWorksheet('ריכוז עלויות');styleSheet(summary);
+  const summaryValueRows:number[]=[];
+  layout.summaryPages.forEach((entries,pageIndex)=>{
+    if(pageIndex)summary.getRow(summary.rowCount).addPageBreak();
+    band(summary,summary.rowCount+1,pageIndex?'ריכוז עלויות (המשך)':'ריכוז עלויות',40);
+    const header=summary.rowCount+1;summary.addRow(['פרק','תיאור',null,null,'סה״כ']);summary.mergeCells(header,2,header,4);summary.mergeCells(header,5,header,6);summary.getRow(header).height=30;
+    entries.forEach((_,i)=>{const t=totals[pageIndex*22+i],n=summary.rowCount+1;summary.addRow([pageIndex*22+i+1,t.title,null,null,{formula:`'${t.sheet.replaceAll("'","''")}'!F${t.row}`,result:t.value}]);summary.mergeCells(n,2,n,4);summary.mergeCells(n,5,n,6);summary.getRow(n).height=24;summaryValueRows.push(n);});
+    frame(summary,header,summary.rowCount);
+    if(pageIndex<layout.summaryPages.length-1)pad(summary,PAGE_HEIGHT-70-entries.length*24);
+  });
   const detailEnd=summary.rowCount;
   const gap=summary.addRow([null,totals.some(t=>t.partial)?'סכומים חלקיים — קיימים סעיפים ללא תמחור מלא':null]);
   summary.mergeCells(gap.number,2,gap.number,6);gap.height=24;
@@ -164,17 +172,23 @@ export async function encodeProject(project: Project): Promise<Uint8Array> {
   const vatRow=baseRow+1;const vat=isNumber(project.vat)?sum.mul(project.vat).div(100).toDecimalPlaces(2,Decimal.ROUND_HALF_UP):null;
   summary.addRow([null,{formula:`IF(ISNUMBER(${rateRef}),"מע"&CHAR(34)&"מ ("&${rateRef}&"%)","מע"&CHAR(34)&"מ (לא הוגדר)")`,result:isNumber(project.vat)?`מע״מ (${project.vat}%)`:'מע״מ (לא הוגדר)'},null,null,{formula:`IF(ISBLANK(${rateRef}),"",IF(ISNUMBER(${rateRef}),ROUND(E${baseRow}*${rateRef}/100,2),"קלט לא תקין"))`,result:vat?.toNumber()??''}]);
   const grandRow=vatRow+1;summary.addRow([null,'סה״כ כולל מע״מ',null,null,{formula:`IF(ISNUMBER(E${vatRow}),SUM(E${baseRow},E${vatRow}),"")`,result:vat?sum.add(vat).toNumber():''}]);
-  frame(summary,2,detailEnd);
-  for(let n=2;n<=detailEnd;n++)for(let c=1;c<=6;c++)summary.getCell(n,c).border={...summary.getCell(n,c).border,bottom:{style:'hair',color:{argb:'FFD7DDD9'}}};
+  for(const n of summaryValueRows)for(let c=1;c<=6;c++)summary.getCell(n,c).border={...summary.getCell(n,c).border,bottom:{style:'hair',color:{argb:'FFD7DDD9'}}};
   for(let n=baseRow;n<=grandRow;n++){
     summary.mergeCells(n,2,n,4);summary.mergeCells(n,5,n,6);summary.getRow(n).height=32;
     for(let c=2;c<=6;c++){summary.getCell(n,c).font={name:'Assistant',size:12,bold:true};summary.getCell(n,c).fill={type:'pattern',pattern:'solid',fgColor:{argb:n===grandRow?'FFE3ECE6':'FFF3F6F4'}};}
     summary.getCell(n,2).border={bottom:border,...(n===baseRow?{top:border}:{})};summary.getCell(n,5).border={bottom:border,...(n===baseRow?{top:border}:{})};
   }
-  for(let n=3;n<=grandRow;n++)if(n!==gap.number)currencyCell(summary,summary.getCell(n,5));
+  for(const n of [...summaryValueRows,baseRow,vatRow,grandRow])currencyCell(summary,summary.getCell(n,5));
   summary.pageSetup.printArea=`A1:F${grandRow}`;summary.pageSetup.firstPageNumber=layout.summaryPage;
-  if(40+30+totals.length*24+24+3*32>PAGE_HEIGHT)throw new Error('טבלת ריכוז העלויות חורגת מעמוד A4. נדרש עימוד ריכוז רב־עמודי.');
   meta.getCell('C2').value=JSON.stringify(mapping);
+  if(project.kind==='template'){
+    for(const sheet of book.worksheets.filter(s=>s!==meta&&s!==cover&&s!==toc))sheet.eachRow(row=>{
+      // Editable quantities remain empty in the file; XX is only an editor hint.
+      if(sheet===summary){if([...summaryValueRows,baseRow,vatRow,grandRow].includes(row.number))row.getCell(5).value=null;}
+      else if(row.getCell(8).value==='item'||row.getCell(8).value==='total')row.getCell(6).value=null;
+    });
+    gap.getCell(2).value=null;
+  }
   for(const sheet of book.worksheets.filter(s=>s!==meta)) sheet.eachRow({includeEmpty:true},(row,n)=>row.eachCell({includeEmpty:true},cell=>{
     if(cell.isMerged && cell.master.address!==cell.address)return;
     // Break shared column/merged styles before setting cell alignment. Otherwise a
@@ -194,7 +208,16 @@ function value(cell: ExcelJS.Cell): Value {
 }
 function textCell(cell: ExcelJS.Cell): string { const v=value(cell); return v===null?'':String(v); }
 function json<T>(s:string): T { try{return JSON.parse(s) as T;}catch{return fail('נתוני מבנה אינם תקינים');} }
-export async function decodeProject(bytes: ArrayBuffer): Promise<{project:Project;warnings:string[]}> {
+function lastDataRow(sheet:ExcelJS.Worksheet):number {
+  // Sheets exports its entire formatted 1,000-row grid. Formatting-only rows
+  // are not document rows, but any actual trailing content must still fail.
+  let last=0;sheet.eachRow(row=>{if(row.hasValues)last=row.number;});return last;
+}
+async function logoDigest(data:string):Promise<string>{
+  const bytes=Uint8Array.from(atob(data.split(',').at(-1)!),c=>c.charCodeAt(0));
+  return Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes)),b=>b.toString(16).padStart(2,'0')).join('');
+}
+export async function decodeProject(bytes: ArrayBuffer,allowContractor=false): Promise<{project:Project;warnings:string[]}> {
   const ExcelJS=(await import('exceljs')).default;
   const book=new ExcelJS.Workbook();
   try { await book.xlsx.load(bytes); } catch { return fail('לא ניתן לקרוא את קובץ ה־Excel. המקור לא שונה.'); }
@@ -202,12 +225,13 @@ export async function decodeProject(bytes: ArrayBuffer): Promise<{project:Projec
   const version=meta?.getCell('B1').value;
   const cover=book.getWorksheet(version===1?'פרטי מסמך':'שער');
   if(!meta || !cover || meta.getCell('A1').value!==SIGNATURE) return fail('זה אינו קובץ עבודה מזוהה של המערכת. נדרש ייבוא מונחה.');
-  if((version!==1&&version!==2&&version!==SCHEMA) || meta.getCell('C1').value!=='project') return fail('גרסת הקובץ או סוג המסמך אינם נתמכים בשלב זה.');
+  const kind=meta.getCell('C1').value;
+  if((version!==1&&version!==2&&version!==3&&version!==SCHEMA) || (kind!=='project'&&(version!==4||kind!=='template')&&!(allowContractor&&version===4&&kind==='contractor'))) return fail(kind==='contractor'?'זהו קובץ הפצה לקבלן. יש לבחור „בדיקת הצעה מוחזרת” מול המקור.':'גרסת הקובץ או סוג המסמך אינם נתמכים בשלב זה.');
   const seen=new Set<string>();
   function identity(v:string) { if(!v || seen.has(v)) return fail('מזהה חסר או כפול בקובץ. נדרש שחזור מונחה.'); seen.add(v); return v; }
   const layout=json<Project['layout']>(textCell(meta.getCell('B2')));
   if(!layout || typeof layout.font!=='string' || !Number.isFinite(layout.sideMarginMm) || !Number.isFinite(layout.verticalMarginMm)) return fail('הגדרות עיצוב פגומות');
-  const project:Project={id:identity(textCell(meta.getCell('D1'))),revisionId:identity(textCell(meta.getCell('E1'))),templateId:textCell(meta.getCell('F1')),kind:'project',
+  const project:Project={id:identity(textCell(meta.getCell('D1'))),revisionId:identity(textCell(meta.getCell('E1'))),templateId:textCell(meta.getCell('F1')),kind:kind==='contractor'?'project':kind as Project['kind'],
     title:'',client:'',location:'',date:'',revision:'',instructions:'',office:'',contractor:'',vat:null,layout,chapters:[]};
   const warnings:string[]=[]; const matched=new Set([cover.id,meta.id]);
   if(version===1)fields.forEach((field,i)=>{if(field==='vat')project.vat=value(cover.getCell(i+1,2));else project[field]=textCell(cover.getCell(i+1,2));});
@@ -219,17 +243,22 @@ export async function decodeProject(bytes: ArrayBuffer): Promise<{project:Projec
       if(field==='vat'){if(cells.length!==1)return fail('שיעור מע״מ כפול');project.vat=value(cells[0]);}
       else project[field]=cells.map(textCell).join(field==='instructions'?'\n':'');
     }
-    if(meta.getCell('D2').value){const dimensions=json<{width:number;height:number}>(textCell(meta.getCell('D2')));const images=cover.getImages();
+    if(meta.getCell('D2').value){const dimensions=json<{width:number;height:number;sha256?:string;reviewRequired?:boolean}>(textCell(meta.getCell('D2')));const images=cover.getImages();
       if(images.length!==1||!isNumber(dimensions.width)||!isNumber(dimensions.height)||!dimensions.width||!dimensions.height)return fail('לוגו המסמך חסר או פגום');
       const media=book.getImage(Number(images[0].imageId));
       const data=media.base64 || (media.buffer?`data:image/png;base64,${btoa(Array.from(new Uint8Array(media.buffer as unknown as ArrayBuffer),b=>String.fromCharCode(b)).join(''))}`:'');
-      if(!data)return fail('לא ניתן לקרוא את לוגו המסמך');project.logo={...dimensions,data};
+      if(!data)return fail('לא ניתן לקרוא את לוגו המסמך');
+      const raw=Uint8Array.from(atob(data.split(',').at(-1)!),c=>c.charCodeAt(0));const view=new DataView(raw.buffer);
+      const resized=raw.length>=24&&view.getUint32(0)===0x89504e47&&(view.getUint32(16)!==dimensions.width||view.getUint32(20)!==dimensions.height);
+      const changed=dimensions.reviewRequired||resized||!!(dimensions.sha256&&dimensions.sha256!==await logoDigest(data));
+      project.logo={width:dimensions.width,height:dimensions.height,data,...(changed?{reviewRequired:true}:{})};
+      if(changed)warnings.push('תמונת הלוגו עובדה או שונתה בתוכנה חיצונית ועלולה להיפגע. יש לבדוק את השער; ניתן לטעון את לוגו המשרד הקבוע בפרטי הפרויקט.');
     }
   }
   const expectedChapters=json<unknown>(textCell(meta.getCell('G1')));
   if(!Array.isArray(expectedChapters) || expectedChapters.some(v=>typeof v!=='string') || new Set(expectedChapters).size!==expectedChapters.length) return fail('רשימת הפרקים אינה תקינה');
   if(project.vat!==null && !isNumber(project.vat)) warnings.push('שיעור מע״מ אינו מספר תקין');
-  for(let m=4;m<=meta.rowCount;m++) {
+  for(let m=4;m<=lastDataRow(meta);m++) {
     const chapterId=identity(textCell(meta.getCell(m,1)));
     const active=value(meta.getCell(m,3)); if(active!==0 && active!==1) return fail('מצב פרק חסר או לא תקין');
     const expected=json<unknown>(textCell(meta.getCell(m,4)));
@@ -237,31 +266,34 @@ export async function decodeProject(bytes: ArrayBuffer): Promise<{project:Projec
     const sheets=book.worksheets.filter(s=>s.getCell('G1').value===chapterId && s.getCell('H1').value==='chapter');
     if(sheets.length!==1) return fail('פרק חסר או כפול. לא ניתן לפתוח באופן מלא.');
     const sheet=sheets[0]; matched.add(sheet.id);
+    const end=lastDataRow(sheet);
     const chapter={id:chapterId,title:textCell(sheet.getCell(version===1?'A1':'B1')),active:active===1,rows:[] as BoqRow[]};
     const rowIds:string[]=[]; const itemRows:number[]=[]; let totals=0;
     if(sheet.rowCount>20000) return fail('מספר השורות גדול מהמגבלה הנתמכת');
-    for(let n=3;n<=sheet.rowCount;n++) {
+    for(let n=3;n<=end;n++) {
       const raw=sheet.getRow(n); if(!raw.hasValues) continue;
       const kind=textCell(sheet.getCell(n,8));
       if(version!==1 && ['spacer','heading','columns'].includes(kind))continue;
-      if(kind==='total') {totals++; if(n!==sheet.rowCount) return fail('שורת סיכום אינה בסוף הפרק'); continue;}
+      if(kind==='total') {totals++; if(n!==end) return fail('שורת סיכום אינה בסוף הפרק'); continue;}
       if(kind!=='item' && kind!=='note') return fail(`סוג שורה לא מזוהה בגיליון ${sheet.name}, שורה ${n}`);
       const row:BoqRow={id:identity(textCell(sheet.getCell(n,7))),kind,description:textCell(sheet.getCell(n,2)),unit:textCell(sheet.getCell(n,3)),quantity:value(sheet.getCell(n,4)),price:value(sheet.getCell(n,5))};
-      if(version===3){const flag=value(sheet.getCell(n,9));if(flag!==null&&flag!==0&&flag!==1)return fail('מצב הקפאת שורה אינו תקין');if(flag===1)row.frozen=true;}
+      if(Number(version)>=3){const flag=value(sheet.getCell(n,9));if(flag!==null&&flag!==0&&flag!==1)return fail('מצב הקפאת שורה אינו תקין');if(flag===1)row.frozen=true;}
+      if(project.kind==='template'&&(row.quantity!==null||row.price!==null||sheet.getCell(n,6).value!==null))return fail('קובץ תבנית מכיל כמות, מחיר או סכום. נדרש ייבוא מונחה; הנתונים לא נוקו בשקט.');
       if(kind==='note' && (row.unit!=='' || row.quantity!==null || row.price!==null || sheet.getCell(n,6).value!==null)) return fail('הערה מכילה נתוני כמות או מחיר. יש לבחור כיצד לשחזר אותה.');
       if(kind==='item'&&!row.frozen) {
         itemRows.push(n);
         if(row.quantity!==null && !isNumber(row.quantity)) warnings.push(`${chapter.title}, שורה ${n}: כמות לא תקינה נשמרה לבדיקה`);
         if(row.price!==null && !isNumber(row.price) && row.price!=='כלול' && row.price!=='לא רלוונטי') warnings.push(`${chapter.title}, שורה ${n}: מחיר לא תקין נשמר לבדיקה`);
         // ExcelJS expands shared formulas through cell.formula.
-        if(sheet.getCell(n,6).formula!==itemFormula(n)) warnings.push(`${chapter.title}, שורה ${n}: נוסחת הסכום שונתה; הסכום חושב מחדש`);
+        if(project.kind==='project'&&sheet.getCell(n,6).formula!==itemFormula(n)) warnings.push(`${chapter.title}, שורה ${n}: נוסחת הסכום שונתה; הסכום חושב מחדש`);
       }
       rowIds.push(row.id);chapter.rows.push(row);
     }
     if(totals!==1 || expected.length!==rowIds.length || expected.some(id=>!rowIds.includes(id))) return fail('שורות חסרות או נוספו ללא התאמת מבנה. נדרש ייבוא/שחזור מונחה.');
-    if(sheet.getCell(sheet.rowCount,6).formula!==totalFormula(itemRows)) warnings.push(`${chapter.title}: נוסחת הסיכום שונתה; הסיכום חושב מחדש`);
+    if(project.kind==='project'&&sheet.getCell(end,6).formula!==totalFormula(itemRows)) warnings.push(`${chapter.title}: נוסחת הסיכום שונתה; הסיכום חושב מחדש`);
     project.chapters.push(chapter);
   }
   if(!project.chapters.length || matched.size!==book.worksheets.length || expectedChapters.length!==project.chapters.length || expectedChapters.some(id=>!project.chapters.some(c=>c.id===id))) return fail('פרקים חסרים או גיליונות לא מזוהים בקובץ');
+  if(project.kind==='template'&&(project.client||project.location||project.date||project.revision||project.contractor))return fail('קובץ תבנית מכיל פרטי פרויקט. נדרש ייבוא מונחה.');
   return {project,warnings};
 }

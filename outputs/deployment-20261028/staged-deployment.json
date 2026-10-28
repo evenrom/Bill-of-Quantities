@@ -1,0 +1,41 @@
+{
+  "status": "ok",
+  "deployment": {
+    "id": "dpl_3fZVxdzEF8iejNMwBV8xnconuAuD",
+    "url": "https://bill-of-quantities-ekt1lxpn4-rom-s-projects1.vercel.app",
+    "productionUrl": null,
+    "inspectorUrl": "https://vercel.com/rom-s-projects1/bill-of-quantities/3fZVxdzEF8iejNMwBV8xnconuAuD",
+    "readyState": "INITIALIZING",
+    "target": "production",
+    "deploymentApiUrl": "https://api.vercel.com/v13/deployments/dpl_3fZVxdzEF8iejNMwBV8xnconuAuD",
+    "buildMachine": {
+      "cores": 2,
+      "memory": 8192,
+      "machine": "basic",
+      "selectionType": "fixed",
+      "selectionSource": "plan-default"
+    },
+    "deploymentProtection": [
+      "vercel_authentication"
+    ]
+  },
+  "message": "Deployment bill-of-quantities-ekt1lxpn4-rom-s-projects1.vercel.app ready.",
+  "next": [
+    {
+      "command": "vercel git connect --scope rom-s-projects1 --project bill-of-quantities",
+      "when": "Automatically deploy changes on every push"
+    },
+    {
+      "command": "vercel curl https://bill-of-quantities-ekt1lxpn4-rom-s-projects1.vercel.app",
+      "when": "Verify deployment, including when Deployment Protection is enabled"
+    },
+    {
+      "command": "vercel inspect bill-of-quantities-ekt1lxpn4-rom-s-projects1.vercel.app --scope rom-s-projects1",
+      "when": "Inspect deployment"
+    },
+    {
+      "command": "vercel deploy --prod --scope rom-s-projects1",
+      "when": "Promote to production"
+    }
+  ]
+}

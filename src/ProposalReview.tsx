@@ -1,0 +1,12 @@
+import {useState} from 'react';
+import {inspectProposal,adoptProposal} from './proposals';
+import type {Project} from './model';
+import {openFile,isCancelled} from './files';
+export function ProposalReview({source,close,accept}:{source:Project|null;close:()=>void;accept:(p:Project)=>void}){
+  const [origin,setOrigin]=useState(source);const [file,setFile]=useState<File|null>(null);
+  const [result,setResult]=useState<Awaited<ReturnType<typeof inspectProposal>>|null>(null);
+  const [contractor,setContractor]=useState(''),[error,setError]=useState(''),[busy,setBusy]=useState(false),[confirmed,setConfirmed]=useState(false);
+  async function inspect(f:File,s=origin){setBusy(true);setError('');setConfirmed(false);try{if(f.size>15*1024*1024)throw new Error('הקובץ גדול מדי');setResult(await inspectProposal(await f.arrayBuffer(),s));setFile(f);}catch(e){setResult(null);setError((e as Error).message);}finally{setBusy(false);}}
+  async function chooseSource(){setError('');try{const selected=await openFile();if(selected.project.kind!=='project')throw new Error('יש לבחור פרויקט מקור');setOrigin(selected.project);if(file)await inspect(file,selected.project);}catch(e){if(!isCancelled(e))setError((e as Error).message);}}
+  return <div className="overlay"><section className="dialog" role="dialog" aria-modal="true" aria-label="בדיקת הצעה מוחזרת"><h2>בדיקת הצעה מוחזרת</h2><p>מקור להשוואה: {origin?.title||'לא נבחר — ללא השוואה להיקף המקורי'}</p><button disabled={busy} onClick={()=>void chooseSource()}>בחירת מסמך מקור</button><label>קובץ קבלן מוחזר<input type="file" accept=".xlsx" disabled={busy} onChange={e=>{if(e.target.files?.[0])void inspect(e.target.files[0]);}}/></label>{busy&&<p>בודק…</p>}{result&&<><p>{result.differences.length} הבדלים, {result.issues.length} הערות בדיקה ו־{result.warnings.length} אזהרות פורמט</p><div className="issue-list">{[...result.differences,...result.warnings,...result.issues.map(i=>i.message)].map((line,i)=><p key={i}>{line}</p>)}</div><label>שם הקבלן<input value={contractor} onChange={e=>setContractor(e.target.value)}/></label><label><input type="checkbox" checked={confirmed} onChange={e=>setConfirmed(e.target.checked)}/> עברתי על ההבדלים והחוסרים. אימוץ יפתח עותק נפרד; אין מיזוג או דריסת מקור.</label><button className="primary" disabled={busy||!confirmed||!contractor.trim()} onClick={()=>accept(adoptProposal(result.project,contractor))}>אימוץ ההצעה לעותק חדש</button></>}{error&&<p className="message error" role="alert">{error}</p>}<button onClick={close} disabled={busy}>ביטול</button></section></div>;
+}

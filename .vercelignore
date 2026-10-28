@@ -1,0 +1,16 @@
+.git
+node_modules
+outputs
+e2e
+test-results
+playwright-report
+dist
+docs/**
+!docs/BOQ_TEMPLATE_SPEC.md
+scripts
+README.md
+PRD_BOQ.md
+.env*
+.codex
+.agents
+*.tsbuildinfo

@@ -13,26 +13,27 @@ function fake() {
 beforeEach(()=>{vi.clearAllMocks();vi.stubGlobal('window',{showSaveFilePicker:vi.fn()});});
 it('does not encode or report success when the picker is cancelled',async()=>{
   vi.mocked(window.showSaveFilePicker).mockRejectedValue(new DOMException('Cancelled','AbortError'));
-  let error;try{await saveFile(createProject(),null,true);}catch(e){error=e;}
+  let error;try{await saveFile(createProject(),null);}catch(e){error=e;}
   expect(isCancelled(error)).toBe(true);expect(encode).not.toHaveBeenCalled();
 });
 it('closes the stream before reporting success',async()=>{
   const f=fake();vi.mocked(window.showSaveFilePicker).mockResolvedValue(f.handle);
-  const saved=await saveFile(createProject(),null,true);
+  const saved=await saveFile(createProject(),null);
   expect(f.stream.write).toHaveBeenCalledOnce();expect(f.stream.close).toHaveBeenCalledOnce();expect(saved.name).toBe('test.xlsx');
 });
 it('keeps failures as failures and aborts the stream',async()=>{
   const f=fake();vi.mocked(window.showSaveFilePicker).mockResolvedValue(f.handle);
   f.stream.close.mockRejectedValue(new Error('locked'));
-  await expect(saveFile(createProject(),null,true)).rejects.toThrow('locked');expect(f.stream.abort).toHaveBeenCalledOnce();
+  await expect(saveFile(createProject(),null)).rejects.toThrow('locked');expect(f.stream.abort).toHaveBeenCalledOnce();
 });
 it('prevents overwrite after an external edit, including Save As to the original',async()=>{
   const f=fake();vi.mocked(window.showSaveFilePicker).mockResolvedValue(f.handle);
-  for(const saveAs of [false,true]) await expect(saveFile(createProject(),{handle:f.handle,fingerprint:'old'},saveAs)).rejects.toThrow('השתנה');
+  await expect(saveFile(createProject(),{handle:f.handle,fingerprint:'old'})).rejects.toThrow('השתנה');
   expect(f.raw.createWritable).not.toHaveBeenCalled();
 });
-it('does not write without permission',async()=>{
-  const f=fake();f.raw.requestPermission.mockResolvedValue('denied');
-  await expect(saveFile(createProject(),{handle:f.handle,fingerprint:await fingerprint(f.file)})).rejects.toThrow('הרשאת');
-  expect(f.raw.createWritable).not.toHaveBeenCalled();
+it('always opens Save As even for a bound document and suggests its existing name',async()=>{
+  const f=fake();vi.mocked(window.showSaveFilePicker).mockResolvedValue(f.handle);
+  await saveFile(createProject(),{handle:f.handle,fingerprint:await fingerprint(f.file)});
+  expect(window.showSaveFilePicker).toHaveBeenCalledOnce();expect(window.showSaveFilePicker).toHaveBeenCalledWith(expect.objectContaining({suggestedName:'test.xlsx'}));
+  expect(f.raw.requestPermission).not.toHaveBeenCalled();expect(f.raw.createWritable).toHaveBeenCalledOnce();
 });

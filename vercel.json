@@ -1,0 +1,15 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "vite",
+  "buildCommand": "npm test && npm run build",
+  "outputDirectory": "dist",
+  "headers": [
+    {"source":"/(.*)","headers":[
+      {"key":"X-Content-Type-Options","value":"nosniff"},
+      {"key":"Referrer-Policy","value":"same-origin"},
+      {"key":"X-Frame-Options","value":"DENY"}
+    ]},
+    {"source":"/manifest.webmanifest","headers":[{"key":"Cache-Control","value":"no-cache"}]},
+    {"source":"/","headers":[{"key":"Cache-Control","value":"no-cache"}]}
+  ]
+}

@@ -6,6 +6,12 @@ import {readFile} from 'node:fs/promises';
 async function fixture() {const p=createProject({title:'בדיקת מוצר',vat:17.5}); const b=new ExcelJS.Workbook();await b.xlsx.load(await encodeProject(p) as never);return {p,b};}
 async function decode(b:ExcelJS.Workbook) {return decodeProject(await b.xlsx.writeBuffer() as unknown as ArrayBuffer);}
 describe('workbook boundaries',()=>{
+  it('ignores trailing formatting-only grid rows from Sheets but rejects actual content after totals',async()=>{
+    const {b}=await fixture();const s=b.getWorksheet('בנייה ומחיצות פנים')!;
+    s.getCell('A1000').font={name:'Assistant',size:12};b.getWorksheet('_BOQ_META')!.getCell('A1000').font={name:'Assistant',size:12};
+    expect((await decode(b)).warnings).toEqual([]);
+    s.getCell('B999').value='unexpected content';await expect(decode(b)).rejects.toBeInstanceOf(RecoveryRequired);
+  });
   it('styles empty editable prices before a contractor enters a value',async()=>{
     const {b}=await fixture();const s=b.getWorksheet('בנייה ומחיצות פנים')!;
     for(let n=3;n<=s.rowCount;n++)if(s.getCell(n,8).value==='item'){
@@ -76,6 +82,13 @@ describe('workbook boundaries',()=>{
   it('keeps an embedded office logo independent of the repository',async()=>{
     const p=createProject();p.logo={data:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/l9sAAAAASUVORK5CYII=',width:1,height:1};
     expect((await decodeProject(await encodeProject(p) as never)).project).toEqual(p);
+  });
+  it('flags externally changed logos and preserves the review flag on save',async()=>{
+    const p=createProject();p.logo={data:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/l9sAAAAASUVORK5CYII=',width:1,height:1};
+    const b=new ExcelJS.Workbook();await b.xlsx.load(await encodeProject(p) as never);
+    const meta=b.getWorksheet('_BOQ_META')!,dimensions=JSON.parse(String(meta.getCell('D2').value));dimensions.sha256='changed';meta.getCell('D2').value=JSON.stringify(dimensions);
+    const result=await decode(b);expect(result.project.logo?.reviewRequired).toBe(true);expect(result.warnings.some(w=>w.includes('לוגו'))).toBe(true);
+    expect((await decodeProject(await encodeProject(result.project) as never)).project.logo?.reviewRequired).toBe(true);
   });
   it('round-trips every field, inactive chapter and stable identity',async()=>{
     const p=createProject({title:'פרויקט בדיקה',client:'לקוח לבדיקה',vat:0});

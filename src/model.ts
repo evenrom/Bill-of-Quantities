@@ -1,29 +1,40 @@
 import Decimal from 'decimal.js';
-import restaurant from './data/restaurant.json';
+import {templates} from './templates';
 
 export type Value = number | string | null;
 export interface BoqRow { id: string; kind: 'item' | 'note'; description: string; unit: string; quantity: Value; price: Value; frozen?:boolean }
 export interface Chapter { id: string; title: string; active: boolean; rows: BoqRow[] }
 export interface Project {
-  id: string; revisionId: string; templateId: string; kind: 'project';
+  id: string; revisionId: string; templateId: string; kind: 'project'|'template';
   title: string; client: string; location: string; date: string; revision: string;
   instructions: string; office: string; contractor: string; vat: Value;
-  logo?: {data:string;width:number;height:number};
+  logo?: {data:string;width:number;height:number;reviewRequired?:boolean};
   layout: {font: string; sideMarginMm: number; verticalMarginMm: number};
   chapters: Chapter[];
+}
+export function deriveDocument(source:Project,kind:Project['kind'],fields:Partial<Pick<Project,'title'|'client'|'location'|'date'|'revision'|'vat'>>={}):Project {
+  const next:Project={...structuredClone(source),id:id(),revisionId:id(),kind,
+    templateId:source.kind==='template'?source.id:source.templateId,
+    title:'',client:'',location:'',date:kind==='project'?today():'',revision:'',contractor:'',
+    chapters:source.chapters.map(c=>({...c,id:id(),rows:c.rows.map(r=>({...r,id:id(),
+      quantity:kind==='project'&&source.kind==='project'?r.quantity:null,price:null}))})),...fields};
+  if(kind==='template'){next.client='';next.location='';next.date='';next.revision='';}
+  return next;
 }
 export const id = () => crypto.randomUUID();
 export const OFFICE_DETAILS='נחלת יצחק 34 ת"א | טל- 0505241244';
 export const DEFAULT_VAT=18;
 export const today = () => new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Jerusalem',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
-export function createProject(fields: Partial<Pick<Project, 'title'|'client'|'location'|'date'|'revision'|'vat'>> = {}): Project {
+export function createProject(fields: Partial<Pick<Project, 'title'|'client'|'location'|'date'|'revision'|'vat'>> = {}, templateId='restaurant'): Project {
+  const template=templates.find(t=>t.id===templateId);
+  if(!template)throw new Error('תבנית לא מוכרת');
   return {
-    id:id(), revisionId:id(), templateId:restaurant.id, kind:'project',
+    id:id(), revisionId:id(), templateId:template.id, kind:'project',
     title:'', client:'', location:'', date:today(), revision:'', vat:DEFAULT_VAT,
-    instructions:restaurant.instructions, office:OFFICE_DETAILS, contractor:'',
+    instructions:template.instructions, office:OFFICE_DETAILS, contractor:'',
     layout:{font:'Assistant',sideMarginMm:6.35,verticalMarginMm:19.05},
     ...fields,
-    chapters:restaurant.chapters.map(c => ({id:id(), title:c.title, active:c.active,
+    chapters:template.chapters.map(c => ({id:id(), title:c.title, active:c.active,
       rows:c.rows.map(r => ({id:id(),kind:r.kind as BoqRow['kind'],description:r.description,unit:r.unit,quantity:null,price:null}))})),
   };
 }

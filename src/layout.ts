@@ -50,5 +50,6 @@ export function layoutDocument(project:Project) {
     }
     const result={chapter,pages,start:chapter.active?start:0};if(chapter.active)start+=pages.length;return result;
   });
-  return {introPages,chapters,totalPages:start,summaryPage:start};
+  const summaryPages=Array.from({length:Math.max(1,Math.ceil(active.length/22))},(_,i)=>active.slice(i*22,(i+1)*22));
+  return {introPages,chapters,totalPages:start+summaryPages.length-1,summaryPage:start,summaryPages};
 }
