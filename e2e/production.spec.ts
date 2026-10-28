@@ -5,7 +5,7 @@ import ExcelJS from 'exceljs';
 test('preview, missing-data navigation, separate contractor export and PDF print output',async({page,context})=>{
   test.setTimeout(60000);
   await context.addInitScript(()=>{window.print=()=>{};});
-  await page.goto('/');await page.getByRole('button',{name:'יצירה מתבנית מסעדה',exact:true}).click();
+  await page.goto('/');await page.getByRole('button',{name:'יצירה מתבנית עסק מסחרי',exact:true}).click();
   await page.getByRole('textbox',{name:'שם פרויקט',exact:true}).fill('בדיקת הפקה');
   await page.getByRole('button',{name:'יצירת פרויקט',exact:true}).click();
   await page.getByLabel('כמות בנייה ומחיצות פנים, שורה 2',{exact:true}).fill('0.5');
@@ -13,7 +13,7 @@ test('preview, missing-data navigation, separate contractor export and PDF print
   await page.getByRole('button',{name:'תצוגת A4',exact:true}).click();
   await expect(page.getByRole('dialog',{name:'תצוגת A4',exact:true})).toBeVisible();
   const pages=page.locator('.boq-page');await expect(pages).toHaveCount(13);
-  await expect(page.locator('.summary-total')).toContainText('1,234,567.89');
+  await expect(page.locator('.summary-total')).toContainText('1,234,568');
   const overflowing=await pages.evaluateAll(items=>items.flatMap((page,i)=>{const content=page.querySelector('.boq-content')!;return content.scrollHeight>content.clientHeight+3?[i+1]:[];}));
   expect(overflowing).toEqual([]);
   await page.getByRole('button',{name:'חזרה לעריכה',exact:true}).click();
@@ -49,7 +49,7 @@ test('guided external import maps rows and only replaces the editor after review
 });
 
 test('all chapters enabled still fit A4 including the summary',async({page})=>{
-  await page.goto('/');await page.getByRole('button',{name:'יצירה מתבנית מסעדה',exact:true}).click();await page.getByRole('button',{name:'יצירת פרויקט',exact:true}).click();
+  await page.goto('/');await page.getByRole('button',{name:'יצירה מתבנית עסק מסחרי',exact:true}).click();await page.getByRole('button',{name:'יצירת פרויקט',exact:true}).click();
   for(const box of await page.locator('aside input[type=checkbox]').all())await box.check();
   await page.getByRole('button',{name:'תצוגת A4',exact:true}).click();await expect(page.getByRole('dialog',{name:'תצוגת A4',exact:true})).toBeVisible();
   const overflow=await page.locator('.boq-content').evaluateAll(items=>items.flatMap((c,i)=>c.scrollHeight>c.clientHeight+3?[i+1]:[]));
@@ -57,7 +57,7 @@ test('all chapters enabled still fit A4 including the summary',async({page})=>{
 });
 
 test('returned proposal requires review and contractor identity before separate adoption',async({page})=>{
-  await page.goto('/');await page.getByRole('button',{name:'יצירה מתבנית מסעדה',exact:true}).click();await page.getByRole('button',{name:'יצירת פרויקט',exact:true}).click();
+  await page.goto('/');await page.getByRole('button',{name:'יצירה מתבנית עסק מסחרי',exact:true}).click();await page.getByRole('button',{name:'יצירת פרויקט',exact:true}).click();
   await page.getByRole('button',{name:'תפריט ראשי',exact:true}).click();await page.getByRole('button',{name:'המשך ללא שמירה',exact:true}).click();await page.getByRole('button',{name:'בדיקת הצעה מוחזרת',exact:true}).click();
   await page.getByLabel('קובץ קבלן מוחזר',{exact:true}).setInputFiles('tests/fixtures/legacy-v1.xlsx');
   const adopt=page.getByRole('button',{name:'אימוץ ההצעה לעותק חדש',exact:true});await expect(adopt).toBeDisabled();

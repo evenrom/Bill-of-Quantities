@@ -6,7 +6,7 @@ test('externally changed logo can explicitly be restored from office branding',a
     const handle={name:native.name,getFile:()=>native.getFile(),createWritable:()=>native.createWritable(),requestPermission:async()=>'granted',isSameEntry:async()=>true};
     Object.assign(window,{mediaFile:native,showSaveFilePicker:async()=>handle,showOpenFilePicker:async()=>[handle]});
   });
-  await page.getByRole('button',{name:'יצירה מתבנית מסעדה',exact:true}).click();await page.getByRole('button',{name:'יצירת פרויקט',exact:true}).click();
+  await page.getByRole('button',{name:'יצירה מתבנית עסק מסחרי',exact:true}).click();await page.getByRole('button',{name:'יצירת פרויקט',exact:true}).click();
   await page.getByRole('button',{name:'שמירה',exact:true}).click();await expect(page.getByRole('status')).toHaveText('נשמר');
   const bytes=await page.evaluate(async()=>[...new Uint8Array(await (await (window as unknown as {mediaFile:FileSystemFileHandle}).mediaFile.getFile()).arrayBuffer())]);
   const b=new ExcelJS.Workbook();await b.xlsx.load(new Uint8Array(bytes) as never);const meta=b.getWorksheet('_BOQ_META')!,logo=JSON.parse(String(meta.getCell('D2').value));logo.sha256='changed';meta.getCell('D2').value=JSON.stringify(logo);

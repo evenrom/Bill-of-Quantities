@@ -24,21 +24,22 @@ function TextCell({value,onChange,label}:{value:string;onChange:(v:string)=>void
   return <div className="highlight-editor"><div className="text-mirror" aria-hidden="true">{splitMarkers(value).map((part,i)=>part.marked?<mark key={i} className="variable-token">{part.text}</mark>:part.text)}{'\n'}</div><textarea ref={ref} rows={1} aria-label={label} value={value} onChange={e=>onChange(e.target.value)}/></div>;
 }
 function NumberCell({value,onChange,label,price=false}:{value:Value;onChange:(v:Value)=>void;label:string;price?:boolean}) {
-  const [draft,setDraft]=useState(String(value??''));
+  const display=price&&isNumber(value)?money(value):String(value??'');
+  const [draft,setDraft]=useState(display);
   const [invalid,setInvalid]=useState(false);
   const focused=useRef(false);
-  useEffect(()=>{if(!focused.current)setDraft(String(value??''));},[value]);
+  useEffect(()=>{if(!focused.current)setDraft(display);},[display]);
   const valid=value===null || isNumber(value) || (price && (value==='כלול'||value==='לא רלוונטי'));
   return <input aria-label={label} className={invalid||!valid?'invalid':''} aria-invalid={invalid||!valid}
     title={price?'מספר לא שלילי, כלול או לא רלוונטי':'מספר לא שלילי; אפשר להשאיר ריק בטיוטה'}
     list={price?'prices':undefined} inputMode={price?'text':'decimal'} value={draft}
-    onFocus={()=>{focused.current=true;}}
+    onFocus={()=>{focused.current=true;setDraft(String(value??''));}}
     onChange={e=>{
       const text=e.target.value; const next=parseInput(text);
       const ok=next===null || isNumber(next) || (price && (next==='כלול'||next==='לא רלוונטי'));
       if(ok){setDraft(text);onChange(next);setInvalid(false);}else{setInvalid(true);}
     }}
-    onBlur={()=>{focused.current=false;setDraft(String(value??''));setInvalid(false);}}/>;
+    onBlur={()=>{focused.current=false;setDraft(display);setInvalid(false);}}/>;
 }
 type Action='new'|'open'|'newTemplate'|'fromTemplate'|'toTemplate'|'duplicate'|'copyTemplate'|'import'|'proposal'|'home'|'openTemplate'|'editTemplate';
 function App() {

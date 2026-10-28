@@ -18,7 +18,7 @@ test('create, edit, save, reopen, cancel/fail, dirty snapshot and external confl
       }};
     Object.assign(window,{boqTest:{state,native},showSaveFilePicker:async()=>{if(state.cancel)throw new DOMException('Cancelled','AbortError');return handle;},showOpenFilePicker:async()=>[handle]});
   });
-  await page.getByRole('button',{name:'יצירה מתבנית מסעדה',exact:true}).click();
+  await page.getByRole('button',{name:'יצירה מתבנית עסק מסחרי',exact:true}).click();
   await expect(page.getByLabel('שיעור מע״מ (%)',{exact:true})).toHaveValue('18');
   await expect(page.getByLabel('תאריך',{exact:true})).toHaveValue(await page.evaluate(()=>new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Jerusalem',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date())));
   await page.getByLabel('שם פרויקט',{exact:true}).fill('בדיקת מסלול ראשון');
@@ -37,7 +37,7 @@ test('create, edit, save, reopen, cancel/fail, dirty snapshot and external confl
   await page.getByLabel('מחיר פירוק והריסה, שורה 2',{exact:true}).fill('0');
   await page.getByLabel('כמות בנייה ומחיצות פנים, שורה 2',{exact:true}).fill('0.5');
   await page.getByLabel('מחיר בנייה ומחיצות פנים, שורה 2',{exact:true}).fill('0.01');
-  await expect(page.locator('tr').filter({has:page.getByLabel('כמות בנייה ומחיצות פנים, שורה 2',{exact:true})})).toContainText('0.01₪');
+  await expect(page.locator('tr').filter({has:page.getByLabel('כמות בנייה ומחיצות פנים, שורה 2',{exact:true})})).toContainText('0₪');
   await page.getByLabel('כמות בנייה ומחיצות פנים, שורה 3',{exact:true}).fill('3');
   await page.getByLabel('מחיר בנייה ומחיצות פנים, שורה 3',{exact:true}).fill('10');
   await page.getByRole('button',{name:'פעולות בנייה ומחיצות פנים, שורה 3',exact:true}).click();
@@ -55,7 +55,7 @@ test('create, edit, save, reopen, cancel/fail, dirty snapshot and external confl
   await page.getByRole('button',{name:'מחיקה בנייה ומחיצות פנים, שורה 3',exact:true}).click();
   await expect(page.locator(`[data-row-id="${frozenId}"]`)).toHaveCount(0);
   await page.getByRole('button',{name:'Undo',exact:true}).click();
-  await expect(frozenRow).toHaveClass('frozen');await expect(page.getByLabel('מחיר בנייה ומחיצות פנים, שורה 3',{exact:true})).toHaveValue('10');
+  await expect(frozenRow).toHaveClass('frozen');await expect(page.getByLabel('מחיר בנייה ומחיצות פנים, שורה 3',{exact:true})).toHaveValue('10₪');
   await page.getByRole('button',{name:'פתח לעריכת טיוטה'}).first().click();
   await expect(description).toHaveValue('סעיף טיוטה שנשמר\nשורה שנייה');
   await expect(page.getByLabel('כמות פירוק והריסה, שורה 2',{exact:true})).toHaveValue('0');
@@ -97,7 +97,7 @@ test('create, edit, save, reopen, cancel/fail, dirty snapshot and external confl
 
 test('hover insertion, notes, priced conversion confirmation and undo',async({page})=>{
   await page.goto('/');
-  await page.getByRole('button',{name:'יצירה מתבנית מסעדה',exact:true}).click();
+  await page.getByRole('button',{name:'יצירה מתבנית עסק מסחרי',exact:true}).click();
   await page.getByRole('button',{name:'יצירת פרויקט',exact:true}).click();
   const chapter=page.locator('section.chapter').filter({has:page.getByRole('heading',{name:'פרק 1 — בנייה ומחיצות פנים',exact:true})});
   const before=await chapter.locator('tr[data-row-id]').count();
@@ -115,7 +115,7 @@ test('hover insertion, notes, priced conversion confirmation and undo',async({pa
   await page.getByRole('button',{name:'פעולות בנייה ומחיצות פנים, שורה 2',exact:true}).click();page.once('dialog',d=>d.dismiss());await convert.click();await expect(quantity).toHaveValue('2');
   await page.getByRole('button',{name:'פעולות בנייה ומחיצות פנים, שורה 2',exact:true}).click();page.once('dialog',d=>d.accept());await convert.click();await expect(quantity).toHaveCount(0);
   await page.getByRole('button',{name:'Undo',exact:true}).click();await expect(quantity).toHaveValue('2');
-  await expect(page.getByLabel('מחיר בנייה ומחיצות פנים, שורה 2',{exact:true})).toHaveValue('50');
+  await expect(page.getByLabel('מחיר בנייה ומחיצות פנים, שורה 2',{exact:true})).toHaveValue('50₪');
   await page.getByRole('button',{name:'Redo',exact:true}).click();await expect(quantity).toHaveCount(0);
   await chapter.getByRole('button',{name:'+ הערה חדשה',exact:true}).click();
   await expect(chapter.locator('tr[data-row-id]')).toHaveCount(before+2);

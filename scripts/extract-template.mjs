@@ -32,9 +32,9 @@ const counts = {chapters:chapters.length, items:chapters.flatMap(c=>c.rows).filt
 assert.equal(counts.items,itemCount); assert.equal(counts.notes,noteCount);
 assert.ok(instructions.length,name);
 console.log(name,counts);
-return {id,name,instructions,chapters};
+return {id,name:id==='restaurant'?'עסק מסחרי':name,instructions,chapters};
 });
 const sourceIds=templates.flatMap(t=>t.chapters.flatMap(c=>[c.sourceId,...c.rows.map(r=>r.sourceId)]));
 assert.equal(sourceIds.length,656);assert.equal(new Set(sourceIds).size,656);
 mkdirSync('src/data',{recursive:true});
-for(const template of templates.filter(t=>!selected.length||selected.includes(t.id)))writeFileSync(`src/data/${template.id}.json`,JSON.stringify(template,null,2)+'\n');
+for(const template of templates.filter(t=>t.id!=='kiosk'&&(!selected.length||selected.includes(t.id))))writeFileSync(`src/data/${template.id}.json`,JSON.stringify(template,null,2)+'\n');

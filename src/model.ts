@@ -59,8 +59,8 @@ export function numbering(project: Project) {
   return {chapters,rows};
 }
 export const money = (value: number) => {
-  const rounded=new Decimal(value).toDecimalPlaces(2,Decimal.ROUND_HALF_UP).toNumber();
-  return `${rounded.toLocaleString('he-IL',{minimumFractionDigits:Number.isInteger(rounded)?0:2,maximumFractionDigits:2})}₪`;
+  const rounded=new Decimal(value).toDecimalPlaces(0,Decimal.ROUND_HALF_UP).toNumber();
+  return `${rounded.toLocaleString('he-IL',{maximumFractionDigits:0})}₪`;
 };
 export function parseInput(text: string): Value {
   if(text.trim()==='') return null;

@@ -1,7 +1,7 @@
 import {test,expect} from '@playwright/test';
 test('group copy, paste without prices, undo, context actions and search navigation',async({page,context})=>{
   await context.grantPermissions(['clipboard-read','clipboard-write']);await page.goto('/');
-  await page.getByRole('button',{name:'יצירה מתבנית מסעדה',exact:true}).click();await page.getByRole('button',{name:'יצירת פרויקט',exact:true}).click();
+  await page.getByRole('button',{name:'יצירה מתבנית עסק מסחרי',exact:true}).click();await page.getByRole('button',{name:'יצירת פרויקט',exact:true}).click();
   await page.getByLabel('כמות בנייה ומחיצות פנים, שורה 2',{exact:true}).fill('3');await page.getByLabel('מחיר בנייה ומחיצות פנים, שורה 2',{exact:true}).fill('40');
   await page.getByLabel('בחירת בנייה ומחיצות פנים, שורה 2',{exact:true}).check();
   await page.getByLabel('תיאור בנייה ומחיצות פנים, שורה 2',{exact:true}).click({button:'right'});

@@ -21,15 +21,13 @@ describe('workbook boundaries',()=>{
       expect(cell.font.name).toBe('Assistant');expect(cell.alignment.vertical).toBe('top');
     }
   });
-  it('formats whole amounts without cents and fractional amounts with two digits',async()=>{
-    expect(money(10)).toBe('10₪');expect(money(10.5)).toBe('10.50₪');expect(money(0)).toBe('0₪');
-    const p=createProject();p.chapters[1].rows[1].price=10;
+  it('displays whole shekels without changing stored cents',async()=>{
+    expect(money(10)).toBe('10₪');expect(money(10.5)).toBe('11₪');expect(money(1370.49)).toBe('1,370₪');expect(money(0)).toBe('0₪');
+    const p=createProject();p.chapters[1].rows[1].price=10.5;
     const b=new ExcelJS.Workbook();await b.xlsx.load(await encodeProject(p) as never);
     const s=b.getWorksheet('בנייה ומחיצות פנים')!;
-    expect(s.getCell('E4').numFmt).toBe('[=10]#,##0"₪";#,##0.00"₪"');
-    const rules=(s as unknown as {conditionalFormattings:{ref:string;rules:unknown[]}[]}).conditionalFormattings;
-    expect(rules.some(cf=>cf.ref==='E4'&&cf.rules.length===2)).toBe(true);
-    expect((await decode(b)).project.chapters[1].rows[1].price).toBe(10);
+    expect(s.getCell('E4').numFmt).toBe('#,##0"₪"');
+    expect((await decode(b)).project.chapters[1].rows[1].price).toBe(10.5);
   });
   it('top-aligns table cells and gives summary amounts E:F with a separate three-line total',async()=>{
     const {b}=await fixture();const summary=b.getWorksheet('ריכוז עלויות')!;

@@ -11,16 +11,9 @@ const fail = (message: string): never => { throw new RecoveryRequired(message); 
 const fields = ['title','client','location','date','revision','instructions','office','contractor','vat'] as const;
 export const itemFormula = (n: number) => `IF(ISBLANK(D${n}),"",IF(NOT(ISNUMBER(D${n})),"קלט לא תקין",IF(D${n}<0,"קלט לא תקין",IF(ISBLANK(E${n}),"",IF(OR(E${n}="כלול",E${n}="לא רלוונטי"),0,IF(NOT(ISNUMBER(E${n})),"קלט לא תקין",IF(E${n}<0,"קלט לא תקין",ROUND(D${n}*E${n},2))))))))`;
 const totalFormula = (rows: number[]) => rows.length ? `SUM(${rows.map(n=>`F${n}`).join(',')})` : '0';
-function currencyCell(sheet:ExcelJS.Worksheet,cell:ExcelJS.Cell) {
-  const value=typeof cell.value==='number'?cell.value:cell.result;
-  // The fallback keeps cents visible after external edits, even in readers that
-  // don't support conditional number formats (notably Google Sheets).
-  cell.numFmt=typeof value==='number'&&Number.isInteger(value)
-    ?`[=${value}]#,##0"₪";#,##0.00"₪"`:'#,##0.00"₪"';
-  sheet.addConditionalFormatting({ref:cell.address,rules:[
-    {type:'expression',priority:1,formulae:[`AND(ISNUMBER(${cell.address}),ROUND(${cell.address},2)=INT(ROUND(${cell.address},2)))`],style:{numFmt:'#,##0"₪"'}},
-    {type:'expression',priority:2,formulae:[`AND(ISNUMBER(${cell.address}),ROUND(${cell.address},2)<>INT(ROUND(${cell.address},2)))`],style:{numFmt:'#,##0.00"₪"'}}
-  ]});
+function currencyCell(_sheet:ExcelJS.Worksheet,cell:ExcelJS.Cell) {
+  // Display whole shekels; preserve stored prices and formula precision.
+  cell.numFmt='#,##0"₪"';
 }
 function styleSheet(sheet: ExcelJS.Worksheet) {
   sheet.views = [{rightToLeft:true,showGridLines:false}];

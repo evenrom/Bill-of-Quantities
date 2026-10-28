@@ -26,7 +26,7 @@ try{
   page.on('pageerror',error=>errors.push(error.message));
   const response=await page.goto(baseURL);
   expect(response.status()).toBe(200);
-  await expect(page.locator('.template-choice')).toHaveCount(6);
+  await expect(page.locator('.template-choice')).toHaveCount(5);
   const headers=response.headers();
   expect(headers['x-content-type-options']).toBe('nosniff');
   expect(headers['x-frame-options']).toBe('DENY');
@@ -47,7 +47,7 @@ try{
   expect(errors).toEqual([]);
   mkdirSync('outputs/deployment-20261028',{recursive:true});
   await page.screenshot({path:'outputs/deployment-20261028/live-home.png'});
-  const result={url:baseURL,anonymousStatus:blocked.status(),authenticatedStatus:response.status(),templates:6,manifest:{name:manifest.name,display:manifest.display,dir:manifest.dir},installabilityErrors:installability.installabilityErrors,fileAccess,consoleErrors:errors};
+  const result={url:baseURL,anonymousStatus:blocked.status(),authenticatedStatus:response.status(),templates:5,manifest:{name:manifest.name,display:manifest.display,dir:manifest.dir},installabilityErrors:installability.installabilityErrors,fileAccess,consoleErrors:errors};
   writeFileSync('outputs/deployment-20261028/live-check.json',JSON.stringify(result,null,2)+'\n');
   console.log(JSON.stringify(result,null,2));
 }finally{

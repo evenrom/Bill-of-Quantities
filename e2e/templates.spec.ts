@@ -1,6 +1,6 @@
 import {test,expect} from '@playwright/test';
 import {readFileSync} from 'node:fs';
-const templates=['restaurant','kiosk','apartment','private_house','bfresh','oshi_oshi'].map(id=>JSON.parse(readFileSync(`src/data/${id}.json`,'utf8')) as {id:string;name:string;instructions:string;chapters:{active:boolean;title:string}[]});
+const templates=['restaurant','apartment','private_house','bfresh','oshi_oshi'].map(id=>JSON.parse(readFileSync(`src/data/${id}.json`,'utf8')) as {id:string;name:string;instructions:string;chapters:{active:boolean;title:string}[]});
 
 test('choose each template, edit, save and reopen its complete project',async({page})=>{
   const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
@@ -35,7 +35,7 @@ test('choose each template, edit, save and reopen its complete project',async({p
 test('switch template in the new project dialog',async({page})=>{
   await page.goto('/');
   await page.screenshot({path:'outputs/implementation-20261028/templates.png',fullPage:true});
-  await page.getByRole('button',{name:'יצירה מתבנית מסעדה',exact:true}).click();
+  await page.getByRole('button',{name:'יצירה מתבנית עסק מסחרי',exact:true}).click();
   await page.getByRole('combobox',{name:'תבנית'}).selectOption('apartment');
   await page.getByRole('button',{name:'יצירת פרויקט',exact:true}).click();
   await expect(page.locator('.chapter')).toHaveCount(16);

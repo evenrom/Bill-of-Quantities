@@ -1,12 +1,18 @@
 import {test,expect} from '@playwright/test';
 test('minimal home, icon toolbar and live placeholder highlighting without export markup',async({page,context})=>{
   await context.addInitScript(()=>{window.print=()=>{};});await page.goto('/');
-  await expect(page.locator('.template-choice')).toHaveCount(6);await expect(page.locator('.clean-home')).not.toContainText('סעיפים');
+  await expect(page.locator('.template-choice')).toHaveCount(5);await expect(page.locator('.clean-home')).not.toContainText('סעיפים');
   await expect(page.getByRole('button',{name:'התקנה כאפליקציה',exact:true})).toBeVisible();
-  await page.getByRole('button',{name:'יצירה מתבנית מסעדה',exact:true}).click();await page.getByRole('button',{name:'יצירת פרויקט',exact:true}).click();
+  await expect(page.getByRole('button',{name:'יצירה מתבנית דוכן',exact:true})).toHaveCount(0);
+  await page.getByRole('button',{name:'יצירה מתבנית עסק מסחרי',exact:true}).click();await page.getByRole('button',{name:'יצירת פרויקט',exact:true}).click();
   await expect(page.getByRole('button',{name:'התקנה כאפליקציה',exact:true})).toHaveCount(0);
   await expect(page.getByText('פרק יעד להדבקה',{exact:true})).toHaveCount(0);await expect(page.getByText('פעולות בשורות',{exact:true})).toHaveCount(0);
   expect((await page.locator('nav.toolbar').innerText()).trim()).toBe('');
+  const price=page.getByLabel('מחיר בנייה ומחיצות פנים, שורה 2',{exact:true});
+  await price.fill('1370.49');await price.press('Tab');
+  await expect(price).toHaveValue('1,370₪');
+  await price.focus();await expect(price).toHaveValue('1370.49');
+  await price.press('Tab');await expect(price).toHaveValue('1,370₪');
   const input=page.getByLabel('תיאור בנייה ומחיצות פנים, שורה 2',{exact:true}),mirror=input.locator('..').locator('.text-mirror');
   await input.fill('תיאור {כיור או ציוד} ו{טיפוס}');await expect(mirror.locator('mark')).toHaveCount(2);
   await input.fill('תיאור כיור רגיל');await expect(mirror.locator('mark')).toHaveCount(0);
