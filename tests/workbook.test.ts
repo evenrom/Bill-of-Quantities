@@ -7,13 +7,13 @@ async function fixture() {const p=createProject({title:'בדיקת מוצר',vat
 async function decode(b:ExcelJS.Workbook) {return decodeProject(await b.xlsx.writeBuffer() as unknown as ArrayBuffer);}
 describe('workbook boundaries',()=>{
   it('ignores trailing formatting-only grid rows from Sheets but rejects actual content after totals',async()=>{
-    const {b}=await fixture();const s=b.getWorksheet('בנייה ומחיצות פנים')!;
+    const {b}=await fixture();const s=b.getWorksheet('מחיצות פנים')!;
     s.getCell('A1000').font={name:'Assistant',size:12};b.getWorksheet('_BOQ_META')!.getCell('A1000').font={name:'Assistant',size:12};
     expect((await decode(b)).warnings).toEqual([]);
     s.getCell('B999').value='unexpected content';await expect(decode(b)).rejects.toBeInstanceOf(RecoveryRequired);
   });
   it('styles empty editable prices before a contractor enters a value',async()=>{
-    const {b}=await fixture();const s=b.getWorksheet('בנייה ומחיצות פנים')!;
+    const {b}=await fixture();const s=b.getWorksheet('מחיצות פנים')!;
     for(let n=3;n<=s.rowCount;n++)if(s.getCell(n,8).value==='item'){
       const cell=s.getCell(n,5);expect(cell.value).toBeNull();
       expect(cell.font.name).toBe('Assistant');expect(cell.alignment.vertical).toBe('top');
@@ -25,8 +25,8 @@ describe('workbook boundaries',()=>{
     expect(money(10)).toBe('10₪');expect(money(10.5)).toBe('11₪');expect(money(1370.49)).toBe('1,370₪');expect(money(0)).toBe('0₪');
     const p=createProject();p.chapters[1].rows[1].price=10.5;
     const b=new ExcelJS.Workbook();await b.xlsx.load(await encodeProject(p) as never);
-    const s=b.getWorksheet('בנייה ומחיצות פנים')!;
-    expect(s.getCell('E4').numFmt).toBe('#,##0"₪"');
+    const s=b.getWorksheet('מחיצות פנים')!;
+    expect(s.getCell('E4').numFmt).toBe('#,##0"₪";-#,##0"₪";;@');
     expect((await decode(b)).project.chapters[1].rows[1].price).toBe(10.5);
   });
   it('top-aligns table cells and gives summary amounts E:F with a separate three-line total',async()=>{
@@ -66,7 +66,7 @@ describe('workbook boundaries',()=>{
     expect((await decodeProject(await encodeProject(project) as never)).project).toEqual(project);
   });
   it('puts headings in B1, outlines chapters and links the active summary',async()=>{
-    const {b,p}=await fixture();const s=b.getWorksheet('בנייה ומחיצות פנים')!;
+    const {b,p}=await fixture();const s=b.getWorksheet('מחיצות פנים')!;
     expect(s.getCell('B1').value).toBe(p.chapters[1].title);
     expect(s.getCell('B1').alignment.horizontal).toBe('right');
     expect(s.getCell('A2').border.right?.style).toBe('thin');
@@ -103,19 +103,19 @@ describe('workbook boundaries',()=>{
     expect(c.rows[2].quantity).toBeNull();
   });
   it('preserves invalid external input and warns about changed formulas without executing them',async()=>{
-    const {b}=await fixture();const s=b.getWorksheet('בנייה ומחיצות פנים')!;
+    const {b}=await fixture();const s=b.getWorksheet('מחיצות פנים')!;
     s.getCell('D4').value='XX';s.getCell('E4').value='הצעה אחרת';s.getCell('F4').value={formula:'1+999',result:1000};
     const result=await decode(b);
     expect(result.project.chapters[1].rows[1].price).toBe('הצעה אחרת');
     expect(result.warnings).toHaveLength(3);
   });
   it('expands shared formulas before comparison',async()=>{
-    const {b}=await fixture();const s=b.getWorksheet('בנייה ומחיצות פנים')!;
+    const {b}=await fixture();const s=b.getWorksheet('מחיצות פנים')!;
     s.getCell('F4').value={formula:itemFormula(4),shareType:'shared',ref:'F4:F9'} as ExcelJS.CellFormulaValue;
     for(let n=5;n<=9;n++)s.getCell(n,6).value={sharedFormula:'F4'};
     expect((await decode(b)).warnings).toEqual([]);
   });
-  it.each(['meta','version','duplicate','missing-id','deleted-row','deleted-sheet','deleted-chapter-and-mapping','added-sheet','note-price','input-formula','chapter-id'])('rejects %s damage instead of losing data',async damage=>{
+  it.each(['meta','version','duplicate','missing-id','deleted-row','deleted-sheet','deleted-chapter-and-mapping','added-sheet','input-formula','chapter-id'])('rejects %s damage instead of losing data',async damage=>{
     const {b}=await fixture();const s=b.getWorksheet('פירוק והריסה')!;
     if(damage==='meta')b.removeWorksheet('_BOQ_META');
     if(damage==='version')b.getWorksheet('_BOQ_META')!.getCell('B1').value=99;

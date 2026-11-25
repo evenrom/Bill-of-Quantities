@@ -1,0 +1,56 @@
+import {test,expect} from '@playwright/test';
+import {mkdir} from 'node:fs/promises';
+import ExcelJS from 'exceljs';
+
+test('quantified notes, project chapter names, units and contractor output',async({page,context})=>{
+  await context.addInitScript(()=>{window.print=()=>{};});
+  await page.goto('/');
+  await page.getByRole('button',{name:'יצירה מתבנית עסק מסחרי',exact:true}).click();
+  await page.getByLabel('שם פרויקט',{exact:true}).fill('בדיקת תיקונים');
+  await page.getByLabel('תאריך',{exact:true}).fill('2026-11-24');
+  await page.getByRole('button',{name:'יצירת פרויקט',exact:true}).click();
+  await page.getByLabel('שם הפרק מחיצות פנים',{exact:true}).fill('מחיצות לבדיקה');
+  await page.getByLabel('יחידה מחיצות לבדיקה, שורה 1',{exact:true}).fill('ק״ג');
+  await page.getByLabel('כמות מחיצות לבדיקה, שורה 1',{exact:true}).fill('2');
+  await page.getByLabel('מחיר מחיצות לבדיקה, שורה 1',{exact:true}).fill('25');
+  await expect(page.locator('#units option[value="ק״ג"]')).toHaveCount(1);
+  await expect(page.locator('.chapter').filter({has:page.getByRole('heading',{name:'פרק 1 — מחיצות לבדיקה',exact:true})}).locator('tfoot')).toContainText('50₪');
+  await page.getByRole('button',{name:'ייצוא',exact:true}).click();
+  const popupPromise=page.waitForEvent('popup'),downloadPromise=page.waitForEvent('download');
+  await page.getByRole('button',{name:'ייצוא בכל זאת',exact:true}).click();
+  const [popup,download]=await Promise.all([popupPromise,downloadPromise]);
+  expect(download.suggestedFilename()).toBe('בדיקת תיקונים - כתב כמויות.xlsx');
+  await popup.waitForSelector('.boq-page');await popup.evaluate(()=>document.fonts.ready);
+  await expect(popup.locator('.print-cover')).toContainText('24/11/2026');
+  expect(await popup.locator('.boq-pages').innerText()).not.toMatch(/(?:^|\s)0₪(?:\s|$)/);
+  expect(await popup.locator('.boq-content').evaluateAll(items=>items.filter(c=>c.scrollHeight>c.clientHeight+3).length)).toBe(0);
+  await mkdir('outputs/qa-20261124',{recursive:true});
+  await download.saveAs('outputs/qa-20261124/feedback.xlsx');
+  await popup.pdf({path:'outputs/qa-20261124/feedback.pdf',preferCSSPageSize:true,printBackground:true});
+  await popup.locator('.boq-page').nth(2).screenshot({path:'outputs/qa-20261124/chapter.png'});
+  const b=new ExcelJS.Workbook();await b.xlsx.readFile('outputs/qa-20261124/feedback.xlsx');
+  const s=b.getWorksheet('מחיצות לבדיקה')!;
+  expect(s.getCell('A3').value).toBeNull();expect(s.getCell('D3').value).toBe(2);
+  expect(s.getCell('F3').formula).toContain('D3*E3');
+});
+
+test('commercial review includes every chapter and fits printed A4',async({page,context})=>{
+  await context.addInitScript(()=>{window.print=()=>{};});
+  await page.goto('/');await page.getByRole('button',{name:'יצירה מתבנית עסק מסחרי',exact:true}).click();
+  await page.getByLabel('שם פרויקט',{exact:true}).fill('עסק מסחרי — לבדיקת נוסחים');
+  await page.getByRole('button',{name:'יצירת פרויקט',exact:true}).click();
+  for(const box of await page.locator('aside input[type=checkbox]').all())await box.check();
+  await page.getByRole('button',{name:'ייצוא',exact:true}).click();
+  const popupPromise=page.waitForEvent('popup'),downloadPromise=page.waitForEvent('download');
+  await page.getByRole('button',{name:'ייצוא בכל זאת',exact:true}).click();
+  const [popup,download]=await Promise.all([popupPromise,downloadPromise]);
+  await popup.waitForSelector('.boq-page');await popup.evaluate(()=>document.fonts.ready);
+  expect(await popup.locator('.boq-content').evaluateAll(items=>items.filter(c=>c.scrollHeight>c.clientHeight+3).length)).toBe(0);
+  await mkdir('outputs/qa-20261125',{recursive:true});
+  await download.saveAs('outputs/qa-20261125/commercial-followup.xlsx');
+  await popup.pdf({path:'outputs/qa-20261125/commercial-followup.pdf',preferCSSPageSize:true,printBackground:true});
+  for(const index of [0,1,2,4,6,8,10,12])await popup.locator('.boq-page').nth(index).screenshot({path:`outputs/qa-20261125/page-${index+1}.png`});
+  const b=new ExcelJS.Workbook();await b.xlsx.readFile('outputs/qa-20261125/commercial-followup.xlsx');
+  const meta=b.getWorksheet('_BOQ_META')!;expect(JSON.parse(String(meta.getCell('G1').value))).toHaveLength(22);
+  expect(await popup.locator('.print-chapter .print-row').count()).toBe(105);
+});

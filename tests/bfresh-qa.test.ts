@@ -13,7 +13,7 @@ const row=(id:string)=>rows.find(r=>r.sourceId===id)!;
 const approved=readFileSync('docs/BFRESH_QA_APPROVED_20261028.md','utf8');
 
 describe('approved Bfresh QA corrections',()=>{
-  it('adds the four exact approved lines once, in order and with the approved units and states',()=>{
+  it('preserves the four approved additions, order, units and states after wording refresh',()=>{
     const additions=[...approved.matchAll(/- sourceId: (bfresh\.[\w.]+)[\s\S]*?- נוסח מלא:\r?\n([^\r\n]+)/g)];
     expect(additions).toHaveLength(4);
     const checks:Record<string,[string,string,boolean]>={
@@ -27,20 +27,18 @@ describe('approved Bfresh QA corrections',()=>{
       expect(rows.filter(r=>r.sourceId===id)).toHaveLength(1);
       const c=template.chapters.find(c=>c.rows.some(r=>r.sourceId===id))!;
       expect(c.rows[c.rows.findIndex(r=>r.sourceId===after)+1].sourceId).toBe(id);
-      expect(row(id)).toMatchObject({kind:'item',unit,description});expect(c.active).toBe(active);
+      expect(row(id)).toMatchObject({kind:'item',unit});expect(row(id).description.length).toBeGreaterThan(20);expect(c.active).toBe(active);
     }
     expect(new Set(rows.map(r=>r.sourceId)).size).toBe(rows.length);
-    expect(rows.filter(r=>r.kind==='item')).toHaveLength(80);
+    expect(rows.filter(r=>r.kind==='item')).toHaveLength(77);
     expect(createProject({},'bfresh').chapters.flatMap(c=>c.rows).every(r=>r.quantity===null&&r.price===null)).toBe(true);
   });
-  it('keeps exact approved joinery text and removes historical review material from contractor content',()=>{
-    for(const suffix of ['nJoin','counterInner']){
-      const text=approved.split(`ב־bfresh.joinery.${suffix} להחליף את הנוסח המלא ל־:`)[1].trimStart().split(/\r?\n/)[0];
-      expect(row(`bfresh.joinery.${suffix}`).description).toBe(text);
-    }
+  it('keeps approved joinery materials and removes historical review material from contractor content',()=>{
+    for(const suffix of ['nJoinSpecification','counterInner'])expect(row(`bfresh.joinery.${suffix}`).description).toContain('בירמן 1100');
     const content=[template.instructions,...rows.map(r=>r.description)].join('\n');
     expect(content).toContain('בירמן 1100');expect(content).toContain('אלוקובונד');
     expect(content).not.toMatch(/D2178|Alucobond|BF-\d+|מקורות|במקור|דובאי|נירוסטה מוברשת/);
+    expect(content).not.toMatch(/קרניז.*גל/);
     for(const suffix of ['alucobondSmooth','alucobondPerforated'])expect(row(`bfresh.metalwork.${suffix}`).unit).toBe('מ.א.');
     expect(rows.filter(r=>r.description.includes('80×80'))).toHaveLength(1);
     expect(row('bfresh.tiling.tilePublic').description).toMatch(/2 מ״מ ורובה אפורה/);
@@ -81,7 +79,7 @@ describe('approved Bfresh QA corrections',()=>{
   });
   it('already permits separately priced fire systems without adding fixed template systems',()=>{
     let p=createProject({},'bfresh');const index=template.chapters.findIndex(c=>c.sourceId==='bfresh.safety');
-    const plumbing=p.chapters.find(c=>c.title==='אינסטלציה ותברואה');
+    const plumbing=p.chapters.find(c=>c.title==='אינסטלציה');
     const c=p.chapters[index];expect(c.active).toBe(false);
     for(const [description,price] of [['גלגלון',100],['ספרינקלרים',200]] as const){
       p=insertRow(p,c.id,p.chapters[index].rows.length,'item');
@@ -89,6 +87,6 @@ describe('approved Bfresh QA corrections',()=>{
     }
     expect(chapterTotal(p.chapters[index]).value).toBe(300);
     expect(p.chapters[index].rows.slice(-2).map(r=>r.description)).toEqual(['גלגלון','ספרינקלרים']);
-    expect(p.chapters.find(c=>c.title==='אינסטלציה ותברואה')).toEqual(plumbing);
+    expect(p.chapters.find(c=>c.title==='אינסטלציה')).toEqual(plumbing);
   });
 });

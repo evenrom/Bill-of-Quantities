@@ -8,10 +8,10 @@ it('inserts at the beginning, middle and end without reusing identities',()=>{
   const ids=p.chapters[1].rows.map(r=>r.id);expect(new Set(ids).size).toBe(ids.length);
   expect(p.chapters[1].rows.at(-1)?.quantity).toBeNull();
 });
-it('clears pricing on conversion while preserving the immutable snapshot for undo',()=>{
+it('preserves pricing on conversion while preserving the immutable snapshot for undo',()=>{
   const p=createProject();const c=p.chapters[1],r=c.rows[1];r.quantity=2;r.price=50;
   const next=convertRow(p,c.id,r.id,'note');
-  expect(next.chapters[1].rows[1]).toMatchObject({id:r.id,kind:'note',unit:'',quantity:null,price:null});
+  expect(next.chapters[1].rows[1]).toMatchObject({id:r.id,kind:'note',unit:r.unit,quantity:2,price:50});
   expect(p.chapters[1].rows[1]).toMatchObject({quantity:2,price:50});
 });
 it('moves whole items and preceding notes to continuation pages',()=>{

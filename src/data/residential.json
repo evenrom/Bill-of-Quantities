@@ -1,0 +1,619 @@
+{
+  "id": "residential",
+  "name": "מגורים",
+  "instructions": "1. יש להגיש הצעה לפי הסעיפים והתכולות שבכתב הכמויות בלבד. יש להעביר לבירור אי־התאמה, גבול תכולה לא ברור או פרט חסר לפני ביצוע העבודה הנוגעת להם.\n2. התכניות והפרטים המצורפים לכתב הכמויות הן חלק בלתי נפרד מהצעות המחיר וחלים על ההצעות.",
+  "chapters": [
+    {
+      "sourceId": "residential.demolition",
+      "title": "פירוק והריסה",
+      "active": true,
+      "rows": [
+        {
+          "sourceId": "residential.demolition.nDem",
+          "kind": "note",
+          "description": "כל עבודות ההריסה כוללות: פינוי פסולת והובלתה לאתר פינוי, שמירת הניקיון ותקינות הרכוש הקיים, באם באתר עצמו, ובאם ברכוש הציבורי, כגון: ח.מדרגות, מעלית, לובי המבנה, שטח מסביב למבנה וכד'.",
+          "unit": ""
+        },
+        {
+          "sourceId": "residential.demolition.demWall",
+          "kind": "item",
+          "description": "פירוק מחיצות פנים באזור {אזור}, כולל חיפויים, דלתות ומשקופים בהתאם לתכניות.",
+          "unit": "מ\"ר"
+        },
+        {
+          "sourceId": "residential.demolition.demCeil",
+          "kind": "item",
+          "description": "פירוק הנמכת תקרה מסוג {סוג} באזור {אזור}, לרבות התשתית המיועדת לפירוק.",
+          "unit": "מ\"ר"
+        },
+        {
+          "sourceId": "residential.demolition.demFloor",
+          "kind": "item",
+          "description": "פירוק ריצוף ושכבות תשתית באזור {אזור}, כהכנה לעבודות אינסטלציה, חשמל וריצוף מחדש.",
+          "unit": "מ\"ר"
+        },
+        {
+          "sourceId": "residential.demolition.demFurniture",
+          "kind": "item",
+          "description": "פירוק ופינוי ריהוט קבוע, ארונות, מדפים וציוד קיימים באזור {אזור}.",
+          "unit": "קומפ'"
+        },
+        {
+          "sourceId": "residential.demolition.demElectric",
+          "kind": "item",
+          "description": "פירוק מע' חשמל קיימת: גופי תאורה, שקעים, כבלים, רשתות מערכת, מפסקים וכד'.",
+          "unit": "קומפ'"
+        },
+        {
+          "sourceId": "residential.demolition.demPlumb",
+          "kind": "item",
+          "description": "פירוק מע' אינסטלציה קיימת באזור {אזור}: צנרת ואביזרים סניטריים.",
+          "unit": "קומפ'"
+        },
+        {
+          "sourceId": "residential.demolition.demOpening",
+          "kind": "item",
+          "description": "פירוק דלת או חלון, כולל כנף ומשקוף, בהתאם לתכניות.",
+          "unit": "יח'"
+        }
+      ]
+    },
+    {
+      "sourceId": "residential.partitions",
+      "title": "מחיצות פנים",
+      "active": true,
+      "rows": [
+        {
+          "sourceId": "residential.partitions.nPart",
+          "kind": "note",
+          "description": "מחירי עבודות גבס כוללים: אספקת והתקנת לוחות גבס לבן או ירוק, קונסטרוקציה, התקנת פינות לגבס ושפכטל ראשון. בהתאם לתכניות ולמפרט.",
+          "unit": ""
+        },
+        {
+          "sourceId": "residential.partitions.partDry",
+          "kind": "item",
+          "description": "מחיצות פנים מלוחות גבס {סוג}, מסלול {רוחב} ס\"מ, לגובה {גובה} ס\"מ, בהתאם לתכניות. בסיס המחיצה: {פרט}.",
+          "unit": "מ\"ר"
+        },
+        {
+          "sourceId": "residential.partitions.partBlock",
+          "kind": "item",
+          "description": "בניית מחיצת פנים מבלוק {סוג}, בעובי {עובי} ס\"מ ובגובה {גובה}, בהתאם לתכניות.",
+          "unit": "מ\"ר"
+        },
+        {
+          "sourceId": "residential.partitions.partLining",
+          "kind": "item",
+          "description": "עיבוי קירות ועמודים בלוחות גבס {סוג}, על גבי קונסטרוקציה, כהכנה למעבר צנרת חשמל ואינסטלציה, בהתאם לתכניות.",
+          "unit": "מ\"ר"
+        }
+      ]
+    },
+    {
+      "sourceId": "residential.plumbing",
+      "title": "אינסטלציה",
+      "active": true,
+      "rows": [
+        {
+          "sourceId": "residential.plumbing.nPlumb",
+          "kind": "note",
+          "description": "מחירי עבודות  האינסטלציה כוללים אספקת והתקנת  צנרת מים תקנית מסוג s.p. (באם לא סוכם על צנרת אחרת). צנרת דלוחין מפרופילן, באורכים ובקטרים בהתאם לתכנית אינסטלציה.העבודה כוללת: ביטון צנרת בטיט מלט ללא סיד, בידוד צנרת מים חמים, בדיקת תקינות בלחץ לפני חיפוי רצפה וקירות, התקנת כלים סניטריים כנדרש, מחירי העבודה אינם כוללים אספקת אביזרים סניטריים.",
+          "unit": ""
+        },
+        {
+          "sourceId": "residential.plumbing.plumbMain",
+          "kind": "item",
+          "description": "ביצוע מערכת צנרת מים ודלוחין, כולל שוחות, תאי ביוב לבקרה, מחסומי ריח וחיבור למערכת העירונית, בהתאם לתכנית יועץ אינסטלציה.",
+          "unit": "קומפ'"
+        },
+        {
+          "sourceId": "residential.plumbing.plumbHeater",
+          "kind": "item",
+          "description": "אספקה והתקנת מערכת חימום מים {סוג מערכת}, בקיבול {קיבול} ליטר, כולל בידוד תרמי, ברזי סגירה ובטיחות, צנרת וחיבור חשמל, בהתאם לתכניות. במערכת גז תבוצע צנרת חיבור המים בלבד.",
+          "unit": "יח'"
+        },
+        {
+          "sourceId": "residential.plumbing.plumbHotCold",
+          "kind": "item",
+          "description": "ביצוע נק' מים חמים וקרים \"2\\1 ודלוחין \"2 ,\"4. בהתאם לתכנית.",
+          "unit": "נק'"
+        },
+        {
+          "sourceId": "residential.plumbing.plumbCold",
+          "kind": "item",
+          "description": "ביצוע נקודת מים קרים ודלוחין בהתאם לתכנית.",
+          "unit": "נק'"
+        },
+        {
+          "sourceId": "residential.plumbing.plumbAC",
+          "kind": "item",
+          "description": "ניקוז מזגנים: בהתאם לתכניות יועץ מיזוג.",
+          "unit": "נק'"
+        },
+        {
+          "sourceId": "residential.plumbing.plumbCistern",
+          "kind": "item",
+          "description": "נקודת שירותים, התקנת מכל הדחה סמוי ואביזרים על קיר {סוג}, בהתאם לתכנית.",
+          "unit": "יח'"
+        },
+        {
+          "sourceId": "residential.plumbing.plumbGarden",
+          "kind": "item",
+          "description": "הכנת צנרת והתקנת ברזי גן בהתאם לתכנית פיתוח.",
+          "unit": "נק'"
+        }
+      ]
+    },
+    {
+      "sourceId": "residential.electrical",
+      "title": "חשמל ותקשורת",
+      "active": true,
+      "rows": [
+        {
+          "sourceId": "residential.electrical.nElec",
+          "kind": "note",
+          "description": "מחירי עבודות החשמל כוללים: אספקת והתקנת צנרת תקנית, חציבות וסיתותים, סתימות ותיקוני טיח, אספקת והתקנת אביזרים כנדרש: חיבורי קיר, מפסקים, יח' הגנה למזגן, שקע טלוויזיה, טלפון, אינטרקום, מפסק דוד וכל אביזר נדרש בהתאם לתכנית חשמל, מסוג וטיפוס שיסוכמו עם המזמין ויצויינו בנפרד. כל העבודות : אספקה, צנרת, לוח וכד', יבוצעו בהתאם לתקן, על ידי חשמלאי מוסמך, והמתקן יעבור בדיקה ע\"י חב' החשמל.",
+          "unit": ""
+        },
+        {
+          "sourceId": "residential.electrical.elecLight",
+          "kind": "item",
+          "description": "נק' הדלקה למעגל תאורה, הכוללת צינור 16 מ\"מ, מוליכים בחתך 1.5\\2.5ממ\"ר, בהתאם לצורך, מפ\"ז מאור, יחיד כפול או חילוף, ויציאה לגופי תאורה בקופסת חיבורים ומהדקים.",
+          "unit": "נק'"
+        },
+        {
+          "sourceId": "residential.electrical.elecLightPreparation",
+          "kind": "note",
+          "description": "א. נק' תאורה המצויינות בתכנית חשמל מעגלים: הכנה להדלקות ולחיבור גופי תאורה שונים, בהתאם לתכנית תאורה. למעגלי תאורה מסוג לד: יש להתקין מפסקים מסוג: דימר.",
+          "unit": "נק'"
+        },
+        {
+          "sourceId": "residential.electrical.elecExtra",
+          "kind": "note",
+          "description": "ב. גופי תאורה נוספים המשויכים למעגלי התאורה הנ\"ל.",
+          "unit": "יח'"
+        },
+        {
+          "sourceId": "residential.electrical.elecInstall",
+          "kind": "note",
+          "description": "ג. חיבור והתקנה של גופי תאורה מסוגים שונים, בהתאם לתכניות, על מעגלי התאורה.",
+          "unit": "יח'"
+        },
+        {
+          "sourceId": "residential.electrical.elecPower",
+          "kind": "item",
+          "description": "נק' חיבור קיר, הכוללת צינור 16 מ\"מ, מוליכים בחתך 1.5\\2.5\\3 ממ\"ר, לפי הצורך, ואביזר חיבור קיר.",
+          "unit": "נק'"
+        },
+        {
+          "sourceId": "residential.electrical.elecThree",
+          "kind": "item",
+          "description": "נק' חיבור קיר תלת פאזי, הכוללת צינור 23 מ\"מ, מוליכים בחתך 2.5\\5 ממ\"ר, לפי הצורך, ואביזר חיבור קיר.",
+          "unit": "נק'"
+        },
+        {
+          "sourceId": "residential.electrical.elecAC",
+          "kind": "item",
+          "description": "נקודת מזגן, באביזרים ומוליכים בהתאם להנחיות יועץ או מתקין.",
+          "unit": "נק'"
+        },
+        {
+          "sourceId": "residential.electrical.elecData",
+          "kind": "item",
+          "description": "נק' תקשורת: טלפון, טלוויזיה, אינטרקום, טרמוסטט, מחשב וכד', הכוללת צינור 16 מ\"מ, לקופסת חיבורים קרובה, עד יציאה בקופסת חיבורים, וחוט משיכה מניילון. לא כולל נק' לגלאים ומצלמות.",
+          "unit": "נק'"
+        },
+        {
+          "sourceId": "residential.electrical.elecBoard",
+          "kind": "item",
+          "description": "אספקת והתקנת לוח חשמל ראשי, ולוח משני, כולל כל העבודות וחמרי העזר, כגון: פסי צבירה, מהדקים, חיווט, חיזוקים, הרכבות, שלטי סנדוויץ חרוטים וכד', חיבור לרשת. הערכת גודל חיבור: {גודל חיבור}.",
+          "unit": "קומפ'"
+        }
+      ]
+    },
+    {
+      "sourceId": "residential.floorprep",
+      "title": "הכנות רצפה והגבהות",
+      "active": false,
+      "rows": [
+        {
+          "sourceId": "residential.floorprep.nPrep",
+          "kind": "note",
+          "description": "עבודות הכנת הרצפה וההגבהות יבוצעו בהתאם לתכניות ולמפלסים.",
+          "unit": ""
+        },
+        {
+          "sourceId": "residential.floorprep.floorPrep",
+          "kind": "item",
+          "description": "ביצוע שכבת הכנה או הגבהה מחומר {סוג}, בעובי {עובי} ס\"מ, באזור {אזור}, כהכנה לאיטום וריצוף, בהתאם לתכניות.",
+          "unit": "מ\"ר"
+        }
+      ]
+    },
+    {
+      "sourceId": "residential.waterproofing",
+      "title": "איטום",
+      "active": true,
+      "rows": [
+        {
+          "sourceId": "residential.waterproofing.nSeal",
+          "kind": "note",
+          "description": "עבודות האיטום כוללות הכנת התשתית, רולקות לאורך הקירות והצנרות, טיפול בניקוזים וסגירת האיטום בפתחים, בהתאם למפרט.",
+          "unit": ""
+        },
+        {
+          "sourceId": "residential.waterproofing.sealWet",
+          "kind": "item",
+          "description": "איטום שטחים רטובים באזור {אזור}, במערכת {מפרט האיטום}, לרבות רולקות, חדירות וסיומות בהתאם לתכניות.",
+          "unit": "מ\"ר"
+        },
+        {
+          "sourceId": "residential.waterproofing.sealRoof",
+          "kind": "item",
+          "description": "איטום גג או מרפסת {אזור} במערכת {מערכת איטום}, כולל רולקות, טיפול בנקזים ובחדירות וסיומות בפתחים, בהתאם לתכניות.",
+          "unit": "מ\"ר"
+        }
+      ]
+    },
+    {
+      "sourceId": "residential.doors",
+      "title": "דלתות פנים",
+      "active": true,
+      "rows": [
+        {
+          "sourceId": "residential.doors.nDoor",
+          "kind": "note",
+          "description": "כל מחירי הדלתות כוללים: ייצורם, הובלתם והתקנתם באתר. אספקת והתקנת משקופים עוורים לכל הדלתות, ברחבים שונים, בהתאם לרוחב הקירות ולגמר (טיח, קרמיקה וכו'). הספקת והתקנת הלבשות לכל הדלתות, ברוחב נדרש ע\"י המזמין. מילוי כנפי הדלתות בחלק התחתון יהיה: 100% , ביתר הכנף: 75%. בכנפי דלתות ברוחב מעל 80 ס\"מ, יותקנו 3 צירי פרפר מגולוונים, באורך 10 ס\"מ, עם מיסב נירוסטה. כל סוגי הדלתות כוללים במחירם: פירזול, מנעול צילינדר או מנעול פבלוק (בהתאם לנדרש), רוזטות, זוויתן מוגן, תפס רצפה.",
+          "unit": ""
+        },
+        {
+          "sourceId": "residential.doors.door",
+          "kind": "item",
+          "description": "דלת פנים מטיפוס {זיהוי}, לפתיחה {סוג}.\nכנף: {מפרט}.\nמשקוף והלבשות: {מפרט}.\nגמר: {גמר וגוון}.\nמידות: {מידות}.",
+          "unit": "יח'"
+        },
+        {
+          "sourceId": "residential.doors.doorRestore",
+          "kind": "item",
+          "description": "שיפוץ דלת קיימת {זיהוי}, כולל תיקונים, החלפת פרזול {פרזול} וצביעת הכנף והמשקוף בגמר {גמר}.",
+          "unit": "יח'"
+        }
+      ]
+    },
+    {
+      "sourceId": "residential.tiling",
+      "title": "ריצוף וחיפוי",
+      "active": true,
+      "rows": [
+        {
+          "sourceId": "residential.tiling.nTile",
+          "kind": "note",
+          "description": "מחירי עבודות הריצוף כוללים: אספקת חומר שחור, (מלט אפור או לבן, חול, טיט, דבק אקרילי וכד'), הכנת השטח לריצוף, ניסור והתאמה, ניסור בגרונג, הדבקת פנלים, רובה.",
+          "unit": ""
+        },
+        {
+          "sourceId": "residential.tiling.tilePublic",
+          "kind": "item",
+          "description": "ריצוף של אריחי גרניט פורצלן {דגם וגמר}, במידות {מידות} ס\"מ, באזור {אזור}. פוגות {רוחב} מ\"מ, גמר רובה {סוג וגוון}.",
+          "unit": "מ\"ר"
+        },
+        {
+          "sourceId": "residential.tiling.tileWall",
+          "kind": "item",
+          "description": "חיפוי קירות באזור {אזור}, באריחי {סוג וגוון}, בגודל {מידות} ס\"מ, לגובה {גובה} ס\"מ. פוגות {רוחב} מ\"מ, גמר רובה {סוג וגוון}, בהתאם לתכניות.",
+          "unit": "מ\"ר"
+        },
+        {
+          "sourceId": "residential.tiling.tileSkirt",
+          "kind": "item",
+          "description": "חיפוי פנל קרמיקה בגובה {גובה} ס\"מ, לאורך הקירות והנגרות הקבועה, בהתאם לריצוף ולתכניות.",
+          "unit": "מ.א."
+        },
+        {
+          "sourceId": "residential.tiling.tileParquet",
+          "kind": "item",
+          "description": "אספקת והתקנת פרקט {סוג}, בגמר {גמר}, על תשתית {סוג תשתית}, כולל פנלים וסיומות בהתאם לתכניות.",
+          "unit": "מ\"ר"
+        },
+        {
+          "sourceId": "residential.tiling.stair",
+          "kind": "item",
+          "description": "התקנת מדרגות אבן, רום ושלח, על גבי גרם בטון, במידות {רום ושלח}, בהתאם לתכניות.",
+          "unit": "יח'"
+        },
+        {
+          "sourceId": "residential.tiling.landing",
+          "kind": "item",
+          "description": "התקנת פודסט אבן על גבי גרם בטון, במידות {מידות}, בהתאם לתכניות.",
+          "unit": "יח'"
+        }
+      ]
+    },
+    {
+      "sourceId": "residential.ceilings",
+      "title": "תקרות והנמכות",
+      "active": false,
+      "rows": [
+        {
+          "sourceId": "residential.ceilings.nCeil",
+          "kind": "note",
+          "description": "מחירי העבודות כוללים: אספקת והתקנת לוחות גבס לבן או ירוק, קונסטרוקציה, חמרי תקרה שונים (מגשים, מינרלית, כוורת וכד'), בהתאם לתכניות ולמפרט, פתיחת פתחים לגופי תאורה, רמקולים, גלאים, מפזרים, וכד'. התקנת פינות לגבס ושפכטל ראשון.",
+          "unit": ""
+        },
+        {
+          "sourceId": "residential.ceilings.ceiling",
+          "kind": "item",
+          "description": "הנמכות גבס באזור {אזור}, בגבהים ובחלוקה בהתאם לתכניות.",
+          "unit": "מ\"ר"
+        },
+        {
+          "sourceId": "residential.ceilings.cornice",
+          "kind": "item",
+          "description": "קרניזים מגבס באזור {אזור}, בגבהים ובחלוקה בהתאם לתכניות.",
+          "unit": "מ.א."
+        }
+      ]
+    },
+    {
+      "sourceId": "residential.painting",
+      "title": "צבע",
+      "active": true,
+      "rows": [
+        {
+          "sourceId": "residential.painting.nPaint",
+          "kind": "note",
+          "description": "עבודות הצביעה כוללות את כל החומרים הדרושים לביצוע העבודות (צבע, חמרי אטימה, שפכטל, פריימר וכד'), בהתאם לתכניות ולמפרט. וכן את כל אמצעי העזר, לרבות פיגומים, הנדרשים לביצוע העבודה. הגוונים המצויינים בכתב הכמויות, הם לצורך מכרז בלבד. ייתכנו שינויים ושילובים של גוונים.",
+          "unit": ""
+        },
+        {
+          "sourceId": "residential.painting.paintWall",
+          "kind": "item",
+          "description": "קירות:\nא. צביעת שכבת יסוד מתאימה לתשתית.\nב. מריחת שפכטל אמריקאי עד להחלקה.\nג. צביעה בצבע אקרילי מסוג סופרקריל, בשתי שכבות לפחות ועד לכיסוי מלא.\nגוון: {גוון}.",
+          "unit": "מ\"ר"
+        },
+        {
+          "sourceId": "residential.painting.paintCeiling",
+          "kind": "item",
+          "description": "תקרה:\nא. צביעת הנמכות הגבס בשכבת יסוד מתאימה לתשתית.\nב. מריחת שפכטל אמריקאי עד להחלקה.\nג. צביעה בצבע אקרילי מסוג סופרקריל, בשתי שכבות לפחות ועד לכיסוי מלא.\nגוון: {גוון}.",
+          "unit": "מ\"ר"
+        },
+        {
+          "sourceId": "residential.painting.paintDecor",
+          "kind": "item",
+          "description": "גמר דקורטיבי מסוג {סוג}, על קירות ועמודים באזור {אזור}, לרבות שכבת יסוד, בהתאם לתכניות. גוון: {גוון}.",
+          "unit": "מ\"ר"
+        }
+      ]
+    },
+    {
+      "sourceId": "residential.joinery",
+      "title": "נגרות מגורים",
+      "active": true,
+      "rows": [
+        {
+          "sourceId": "residential.joinery.nJoin",
+          "kind": "note",
+          "description": "כללי:\nכל עבודות הנגרות כוללות: חומרים, צבע, פרזול, זיגוג, הובלה והרכבה באתר, בהתאם לתכניות.",
+          "unit": ""
+        },
+        {
+          "sourceId": "residential.joinery.nJoinSpecification",
+          "kind": "note",
+          "description": "א. כל העבודה תעשה מלוחות עץ לבוד מצופים פורניר {סוג פורניר} וסרגלי עץ מסיבי פרופיל {פרופיל}.\nב. צביעה בבייץ גוון {גוון} וצבע {צבע} RAL {מספר}.\nג. גמר: לכה וצבע {גמר} {אחוז ברק}% ברק.\nד. פורמייקה: גוון {גוון פורמייקה}.",
+          "unit": ""
+        },
+        {
+          "sourceId": "residential.joinery.resKitchen",
+          "kind": "item",
+          "description": "מטבח עשוי {חומר}, בגמר {גמר}, במידות ובחלוקה בהתאם לתכניות, כולל ארונות, דלתות, מגירות ופרזול {פרזול}. משטח, כיור, ברז ומכשירים מתומחרים בנפרד.",
+          "unit": "יח'"
+        },
+        {
+          "sourceId": "residential.joinery.resWardrobe",
+          "kind": "item",
+          "description": "ארון אחסון עשוי {חומר}, בגמר {גמר}, במידות {מידות} ס\"מ, כולל דלתות, מגירות ופרזול, בחלוקה בהתאם לתכניות.",
+          "unit": "יח'"
+        },
+        {
+          "sourceId": "residential.joinery.bathCabinet",
+          "kind": "item",
+          "description": "ארון חדר רחצה עשוי {חומר}, בגמר {גמר}, במידות {מידות} ס\"מ, כולל מגירות ופרזול בהתאם לתכניות. משטח, כיור וברז מתומחרים בנפרד.",
+          "unit": "יח'"
+        }
+      ]
+    },
+    {
+      "sourceId": "residential.metalwork",
+      "title": "מסגרות",
+      "active": false,
+      "rows": [
+        {
+          "sourceId": "residential.metalwork.nMetal",
+          "kind": "note",
+          "description": "כל עבודות המסגרות כוללות: חומרים, צבע יסוד, צבע גמר, הובלה והרכבה באתר, בהתאם לתכניות. על החומרים והצבעים לעמוד בדרישות יועץ הבטיחות.",
+          "unit": ""
+        },
+        {
+          "sourceId": "residential.metalwork.nMetalSpecification",
+          "kind": "note",
+          "description": "א. צביעה בצבע יסוד, צבע גמר {צבע} RAL {מספר}.\nב. משטחים: פח מגולוון {עובי} מ\"מ.\nג. פרופיל: ברזל מגולוון {חתך פרופיל} מ\"מ.",
+          "unit": ""
+        },
+        {
+          "sourceId": "residential.metalwork.metalSupport",
+          "kind": "item",
+          "description": "מסגרת תמיכה לפריט {זיהוי}, עשויה פרופיל {חתך}, במידות {מידות} ס\"מ, בגמר {גמר}, כולל עיגון בהתאם לתכניות.",
+          "unit": "יח'"
+        },
+        {
+          "sourceId": "residential.metalwork.metalPartition",
+          "kind": "item",
+          "description": "מחיצת מתכת דקורטיבית, עשויה פרופיל {חתך}, במידות {מידות} ס\"מ, בגמר {גמר}, כהכנה למילוי לפי התכניות. המילוי מתומחר בנפרד.",
+          "unit": "מ\"ר"
+        }
+      ]
+    },
+    {
+      "sourceId": "residential.glazing",
+      "title": "אלומיניום וזיגוג",
+      "active": false,
+      "rows": [
+        {
+          "sourceId": "residential.glazing.nGlass",
+          "kind": "note",
+          "description": "עבודות האלומיניום והזיגוג כוללות: משקופים, זיגוג, איטום, הלבשות ופרזול, בהתאם לתכניות ולמפרט.",
+          "unit": ""
+        },
+        {
+          "sourceId": "residential.glazing.opening",
+          "kind": "item",
+          "description": "חלון, דלת או ויטרינה מטיפוס {זיהוי}.\nמידות וחלוקה: {מידות}.\nפרופיל: {סוג}.\nזיגוג: {סוג ועובי}.\nפתיחה, פרזול וגמר: {מפרט}.",
+          "unit": "יח'"
+        },
+        {
+          "sourceId": "residential.glazing.glassPanel",
+          "kind": "item",
+          "description": "לוח זכוכית {סוג}, בעובי {עובי} מ\"מ, במידות {מידות} ס\"מ, כולל חיבורים ופרזול בהתאם לתכניות. שלד מסגרת מתומחר בנפרד.",
+          "unit": "יח'"
+        },
+        {
+          "sourceId": "residential.glazing.mirror",
+          "kind": "item",
+          "description": "אספקת והתקנת מראה במידות {מידות} ס\"מ ובעובי {עובי} מ\"מ, עם גמר קצה {פרט}, בהתאם לתכניות.",
+          "unit": "יח'"
+        }
+      ]
+    },
+    {
+      "sourceId": "residential.surfaces",
+      "title": "משטחים למטבח ולחדרי רחצה",
+      "active": true,
+      "rows": [
+        {
+          "sourceId": "residential.surfaces.nSurface",
+          "kind": "note",
+          "description": "מחירי המשטחים כוללים: חומרים, חיתוכים, פתחים, קנטים, הובלה והרכבה באתר, בהתאם לתכניות.",
+          "unit": ""
+        },
+        {
+          "sourceId": "residential.surfaces.surfaceWork",
+          "kind": "item",
+          "description": "אספקת והתקנת משטח עבודה {חומר ודגם}, בעובי {עובי} מ\"מ וברוחב {רוחב} ס\"מ, על גבי הנגרות או הציוד, כולל פתחים וקנטים בהתאם לתכניות.",
+          "unit": "מ.א."
+        },
+        {
+          "sourceId": "residential.surfaces.surfaceBath",
+          "kind": "item",
+          "description": "אספקת והתקנת משטח כיור {חומר ודגם}, במידות {מידות}, כולל פתחים וקנטים בהתאם לתכניות. אספקת כיור וברז: {כלולה או בנפרד}.",
+          "unit": "יח'"
+        }
+      ]
+    },
+    {
+      "sourceId": "residential.supplies",
+      "title": "אספקות גמר נפרדות",
+      "active": false,
+      "rows": [
+        {
+          "sourceId": "residential.supplies.nSupply",
+          "kind": "note",
+          "description": "פרק זה כולל אספקה בלבד. ההתקנה מתומחרת בפרקי העבודות.",
+          "unit": ""
+        },
+        {
+          "sourceId": "residential.supplies.supplyTile",
+          "kind": "item",
+          "description": "אספקת אריחי ריצוף או חיפוי {חומר ודגם}, במידות {מידות} ס\"מ, בגמר {גמר}.",
+          "unit": "מ\"ר"
+        },
+        {
+          "sourceId": "residential.supplies.supplySanitary",
+          "kind": "item",
+          "description": "אספקת כלי או אביזר סניטרי {סוג ודגם}, בגמר {גמר}, כולל האביזרים הנלווים.",
+          "unit": "יח'"
+        },
+        {
+          "sourceId": "residential.supplies.supplyLight",
+          "kind": "item",
+          "description": "אספקת גוף תאורה {סוג ודגם}, כולל ספק, דרייבר ואביזרים בהתאם למפרט.",
+          "unit": "יח'"
+        }
+      ]
+    },
+    {
+      "sourceId": "residential.hvac",
+      "title": "מיזוג ואוורור",
+      "active": false,
+      "rows": [
+        {
+          "sourceId": "residential.hvac.nSpecial",
+          "kind": "note",
+          "description": "העבודות יבוצעו בהתאם לתכניות יועץ מיזוג ואוורור.",
+          "unit": ""
+        },
+        {
+          "sourceId": "residential.hvac.hvac",
+          "kind": "item",
+          "description": "אספקת והתקנת מערכת מיזוג ואוורור {מערכת}, כולל חיבור והפעלה, בהתאם לתכניות היועץ.",
+          "unit": "קומפ'"
+        }
+      ]
+    },
+    {
+      "sourceId": "residential.shell",
+      "title": "שלד ומעטפת",
+      "active": false,
+      "rows": [
+        {
+          "sourceId": "residential.shell.shellNote",
+          "kind": "note",
+          "description": "עבודות הבטון והפלדה יבוצעו בהתאם לתכניות ולמפרט מהנדס הפרויקט, כולל חומרים ואביזרים הנדרשים לביצוע.",
+          "unit": ""
+        },
+        {
+          "sourceId": "residential.shell.shell",
+          "kind": "item",
+          "description": "ביצוע עבודות שלד {סוג והיקף}, בהתאם לתכניות ולכתב הכמויות של המהנדס.",
+          "unit": "קומפ'"
+        },
+        {
+          "sourceId": "residential.shell.exteriorWall",
+          "kind": "item",
+          "description": "בניית קירות חוץ מבלוק {סוג}, בעובי {עובי} ס\"מ, כולל חגורות וקשרים בהתאם לתכניות האדריכל והמהנדס.",
+          "unit": "מ\"ר"
+        }
+      ]
+    },
+    {
+      "sourceId": "residential.exterior",
+      "title": "פיתוח וגמר חוץ",
+      "active": false,
+      "rows": [
+        {
+          "sourceId": "residential.exterior.shellNote",
+          "kind": "note",
+          "description": "עבודות הפיתוח יבוצעו בהתאם לתכניות ולמפרט, כולל תשתית, חיבורים וגמר כמפורט בכל סעיף.",
+          "unit": ""
+        },
+        {
+          "sourceId": "residential.exterior.fence",
+          "kind": "item",
+          "description": "בניית גדר ופילרים מבלוק {סוג}, בעובי {עובי} ס\"מ ובגובה {גובה}, כולל יסוד וחגורת בטון בהתאם לתכניות מהנדס.",
+          "unit": "מ.א."
+        },
+        {
+          "sourceId": "residential.exterior.outsideFloor",
+          "kind": "item",
+          "description": "ריצוף רחבות ושבילים באריחי {חומר}, במידות {מידות} ס\"מ, עם פוגות {רוחב} מ\"מ ורובה {גוון}, בהתאם לתכניות.",
+          "unit": "מ\"ר"
+        },
+        {
+          "sourceId": "residential.exterior.paintExterior",
+          "kind": "item",
+          "description": "שליכט צבעוני {סוג}, בגוון {גוון}, על קירות חוץ, כולל הכנת התשתית ועד כיסוי מלא, בהתאם לתכניות.",
+          "unit": "מ\"ר"
+        }
+      ]
+    }
+  ]
+}

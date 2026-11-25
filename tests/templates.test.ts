@@ -6,13 +6,13 @@ import {encodeProject,decodeProject} from '../src/workbook';
 import {layoutDocument} from '../src/layout';
 
 const spec=readFileSync('docs/BOQ_TEMPLATE_SPEC.md','utf8');
-describe('five available templates',()=>{
+describe('four available templates',()=>{
   it('contains the complete catalog',()=>{
-    expect(templates.map(t=>t.name)).toEqual(['עסק מסחרי','דירה','בית פרטי','ביפרש','אושי־אושי']);
+    expect(templates.map(t=>t.name)).toEqual(['עסק מסחרי','מגורים','ביפרש','אושי־אושי']);
     expect(templates.map(templateCounts)).toEqual([
-      {chapters:22,items:79,notes:23},
-      {chapters:16,items:51,notes:16},{chapters:18,items:60,notes:18},
-      {chapters:21,items:80,notes:21},{chapters:22,items:90,notes:23}
+      {chapters:22,items:77,notes:28},
+      {chapters:18,items:58,notes:23},
+      {chapters:21,items:77,notes:26},{chapters:22,items:90,notes:28}
     ]);
     expect(()=>createProject({},'unknown')).toThrow();
   });
@@ -27,7 +27,7 @@ describe('five available templates',()=>{
     expect((await decodeProject(await encodeProject(p) as never)).project).toEqual(p);
   });
   for(const t of templates){
-    const [sectionNumber,sourceName]=({restaurant:[4,'מסעדה'],apartment:[6,'דירה'],private_house:[7,'בית פרטי'],bfresh:[8,'ביפרש'],oshi_oshi:[9,'אושי־אושי']} as Record<string,[number,string]>)[t.id];
+    const [sectionNumber,sourceName]=({restaurant:[4,'מסעדה'],residential:[15,'מגורים'],bfresh:[8,'ביפרש'],oshi_oshi:[9,'אושי־אושי']} as Record<string,[number,string]>)[t.id];
     it(`${t.name}: matches every specification row and creates independent projects`,()=>{
       const section=spec.split(`## ${sectionNumber} תבנית ${sourceName}`)[1].split(/^## /m)[0];
       const sections=section.split(/^### /m).filter(s=>s.includes('מזהה פרק:'));

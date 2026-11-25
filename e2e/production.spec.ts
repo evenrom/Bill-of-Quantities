@@ -8,11 +8,11 @@ test('preview, missing-data navigation, separate contractor export and PDF print
   await page.goto('/');await page.getByRole('button',{name:'יצירה מתבנית עסק מסחרי',exact:true}).click();
   await page.getByRole('textbox',{name:'שם פרויקט',exact:true}).fill('בדיקת הפקה');
   await page.getByRole('button',{name:'יצירת פרויקט',exact:true}).click();
-  await page.getByLabel('כמות בנייה ומחיצות פנים, שורה 2',{exact:true}).fill('0.5');
-  await page.getByLabel('מחיר בנייה ומחיצות פנים, שורה 2',{exact:true}).fill('2469135.78');
+  await page.getByLabel('כמות מחיצות פנים, שורה 2',{exact:true}).fill('0.5');
+  await page.getByLabel('מחיר מחיצות פנים, שורה 2',{exact:true}).fill('2469135.78');
   await page.getByRole('button',{name:'תצוגת A4',exact:true}).click();
   await expect(page.getByRole('dialog',{name:'תצוגת A4',exact:true})).toBeVisible();
-  const pages=page.locator('.boq-page');await expect(pages).toHaveCount(13);
+  const pages=page.locator('.boq-page');await expect(pages).toHaveCount(14);
   await expect(page.locator('.summary-total')).toContainText('1,234,568');
   const overflowing=await pages.evaluateAll(items=>items.flatMap((page,i)=>{const content=page.querySelector('.boq-content')!;return content.scrollHeight>content.clientHeight+3?[i+1]:[];}));
   expect(overflowing).toEqual([]);
@@ -31,7 +31,7 @@ test('preview, missing-data navigation, separate contractor export and PDF print
   await popup.waitForSelector('.boq-page');await popup.evaluate(()=>document.fonts.ready);
   await popup.pdf({path:'outputs/production-20261028/contractor.pdf',preferCSSPageSize:true,printBackground:true});
   await popup.screenshot({path:'outputs/production-20261028/preview.png',fullPage:false});
-  expect((await popup.locator('.boq-page').count())).toBe(13);
+  expect((await popup.locator('.boq-page').count())).toBe(14);
   const book=new ExcelJS.Workbook();await book.xlsx.readFile('outputs/production-20261028/contractor.xlsx');
   expect(book.getWorksheet('פירוק והריסה')).toBeUndefined();expect(book.getWorksheet('_BOQ_META')!.getCell('C1').value).toBe('contractor');
 });

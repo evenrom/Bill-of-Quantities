@@ -3,7 +3,7 @@ import {readFileSync} from 'node:fs';
 import {mkdir} from 'node:fs/promises';
 import ExcelJS from 'exceljs';
 
-for(const id of ['bfresh','oshi_oshi']){
+for(const id of ['bfresh','oshi_oshi','residential']){
   const template=JSON.parse(readFileSync(`src/data/${id}.json`,'utf8'));
   test(`${id}: approved specifications survive save, reopen, A4 and contractor export`,async({page,context})=>{
     test.setTimeout(90000);
@@ -16,8 +16,23 @@ for(const id of ['bfresh','oshi_oshi']){
       Object.assign(window,{showSaveFilePicker:async()=>handle,showOpenFilePicker:async()=>[handle]});
     });
     await page.getByRole('button',{name:`יצירה מתבנית ${template.name}`,exact:true}).click();
+    await page.getByLabel('שם פרויקט',{exact:true}).fill(`תבנית ${template.name} — לבדיקה`);
     await page.getByRole('button',{name:'יצירת פרויקט',exact:true}).click();
     await expect(page.locator('.chapter.draft')).toHaveCount(template.chapters.filter((c:{active:boolean})=>!c.active).length);
+    if(id==='bfresh'){
+      await page.getByRole('button',{name:'ייצוא',exact:true}).click();
+      const defaultPopup=page.waitForEvent('popup'),defaultDownload=page.waitForEvent('download');
+      await page.getByRole('button',{name:'ייצוא בכל זאת',exact:true}).click();
+      const [preview,file]=await Promise.all([defaultPopup,defaultDownload]);
+      await preview.waitForSelector('.boq-page');await preview.evaluate(()=>document.fonts.ready);
+      await mkdir('outputs/templates-refresh-20261125',{recursive:true});
+      await file.saveAs('outputs/templates-refresh-20261125/bfresh-default.xlsx');
+      await preview.pdf({path:'outputs/templates-refresh-20261125/bfresh-default.pdf',preferCSSPageSize:true,printBackground:true});
+      await expect(preview.locator('.print-chapter').filter({hasText:'הכנות רצפה והגבהות'})).toHaveCount(0);
+      const defaultBook=new ExcelJS.Workbook();await defaultBook.xlsx.readFile('outputs/templates-refresh-20261125/bfresh-default.xlsx');
+      expect(defaultBook.getWorksheet('הכנות רצפה והגבהות')).toBeUndefined();expect(defaultBook.getWorksheet('איטום')).toBeUndefined();
+      await expect(page.getByRole('dialog',{name:'ייצוא',exact:true})).toHaveCount(0);
+    }
     // Enable optional chapters for this inspection so every revised specification is rendered.
     for(const box of await page.locator('aside input[type=checkbox]').all())await box.check();
     await page.getByRole('button',{name:'שמירה',exact:true}).click();
@@ -35,15 +50,15 @@ for(const id of ['bfresh','oshi_oshi']){
     await page.evaluate(()=>document.fonts.ready);
     const overflow=await page.locator('.boq-content').evaluateAll(items=>items.flatMap((c,i)=>c.scrollHeight>c.clientHeight+3?[i+1]:[]));
     expect(overflow).toEqual([]);
-    const codes=id==='bfresh'?['DE6374','בירמן 1100','Glacier White','הקמת מחיצת פנים בגובה מלא','אספקה והתקנת הנמכת תקרת גבס','ביצוע תאורת חירום','חיפוי קיר באזור']:['1537T','1067 GV','RAL 1036'];
+    const codes=id==='bfresh'?['DE6374','בירמן 1100','Glacier White','הקמת מחיצת פנים בגובה מלא','אספקה והתקנת הנמכת תקרת גבס','תאורת חרום','חיפוי קיר באזור']:id==='oshi_oshi'?['1537T','1067 GV','RAL 1036','13×13']:['מטבח עשוי','עבודות הבטון והפלדה'];
     for(const code of codes)await expect(page.locator('.boq-page').filter({hasText:code}).first()).toBeVisible();
     await page.getByRole('button',{name:'חזרה לעריכה',exact:true}).click();
     await page.getByRole('button',{name:'ייצוא',exact:true}).click();
     const popupPromise=page.waitForEvent('popup'),downloadPromise=page.waitForEvent('download');
     await page.getByRole('button',{name:'ייצוא בכל זאת',exact:true}).click();
     const [popup,download]=await Promise.all([popupPromise,downloadPromise]);
-    await mkdir('outputs/chain-update-20261028',{recursive:true});
-    const output=`outputs/chain-update-20261028/${id}`;
+    await mkdir('outputs/templates-refresh-20261125',{recursive:true});
+    const output=`outputs/templates-refresh-20261125/${id}`;
     await download.saveAs(`${output}.xlsx`);
     await popup.waitForSelector('.boq-page');await popup.evaluate(()=>document.fonts.ready);
     await popup.pdf({path:`${output}.pdf`,preferCSSPageSize:true,printBackground:true});

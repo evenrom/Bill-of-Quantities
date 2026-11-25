@@ -1,10 +1,10 @@
-import {id,type Project,type BoqRow,isNumber} from './model';
+import {id,type Project,type BoqRow,isNumber,isPricedRow} from './model';
 export type CopiedRow=Pick<BoqRow,'kind'|'description'|'unit'|'quantity'>;
 export function copyRows(project:Project,selected:Set<string>):CopiedRow[]{
   return project.chapters.flatMap(c=>c.rows.filter(r=>selected.has(r.id)).map(({kind,description,unit,quantity})=>({kind,description,unit,quantity:project.kind==='template'?null:quantity})));
 }
 export function pasteRows(project:Project,chapterId:string,index:number,rows:CopiedRow[]):Project {
-  const copies=rows.map(r=>({...r,id:id(),price:null,quantity:project.kind==='template'||r.kind==='note'?null:r.quantity,unit:r.kind==='note'?'':r.unit}));
+  const copies=rows.map(r=>({...r,id:id(),price:null,quantity:project.kind==='template'?null:r.quantity}));
   return {...project,chapters:project.chapters.map(c=>c.id===chapterId?{...c,rows:[...c.rows.slice(0,index),...copies,...c.rows.slice(index)]}:c)};
 }
 export const clipboardText=(rows:CopiedRow[])=>JSON.stringify({format:'BOQ_ROWS',version:1,rows});
@@ -14,7 +14,7 @@ export function readClipboard(text:string):CopiedRow[]{
   if(data?.format!=='BOQ_ROWS'||data.version!==1||!Array.isArray(data.rows)||!data.rows.length||data.rows.length>2000)throw new Error('תוכן העתקה אינו תקין');
   return data.rows.map((r:CopiedRow)=>{
     if(!r||!['item','note'].includes(r.kind)||typeof r.description!=='string'||typeof r.unit!=='string'||!(r.quantity===null||typeof r.quantity==='string'||isNumber(r.quantity)))throw new Error('שורת העתקה אינה תקינה');
-    return {kind:r.kind,description:r.description,unit:r.kind==='note'?'':r.unit,quantity:r.kind==='note'?null:r.quantity};
+    return {kind:r.kind,description:r.description,unit:r.unit,quantity:r.quantity};
   });
 }
 export interface Issue {chapterId?:string;rowId?:string;field:string;message:string}
@@ -34,7 +34,7 @@ export function checkProject(p:Project,returned=false):Issue[]{
     const add=(field:string,message:string)=>issues.push({chapterId:c.id,rowId:r.id,field,message:`${c.title}: ${message}`});
     if(!r.description.trim())add('description','תיאור חסר');
     const markers=[...new Set(r.description.match(unfinished)??[])];if(markers.length)add('description',`יש להשלים ${markers.join(', ')}`);
-    if(r.kind==='note')continue;
+    if(!isPricedRow(r))continue;
     if(!r.unit.trim())add('unit','יחידה חסרה');
     if(p.kind!=='template'){
       if(!isNumber(r.quantity))add('quantity','כמות חסרה או אינה תקינה');

@@ -41,8 +41,16 @@ describe('custom template and duplication boundaries',()=>{
     t.chapters[0].rows[1].price=1;await expect(encodeProject(t)).rejects.toThrow();
   });
   it('continues opening schema v3 projects including frozen rows',async()=>{
-    const p=source(),b=new ExcelJS.Workbook();await b.xlsx.load(await encodeProject(p) as never);
+    const p=source(),b=new ExcelJS.Workbook();
+    p.chapters.flatMap(c=>c.rows).filter(r=>r.kind==='note').forEach(r=>r.unit='');
+    await b.xlsx.load(await encodeProject(p) as never);
     b.getWorksheet('_BOQ_META')!.getCell('B1').value=3;
+    // Recreate the legacy encoding: notes had no formulas and totals referenced items only.
+    for(const c of p.chapters){const s=b.getWorksheet(c.title)!;const rows:number[]=[];
+      s.eachRow(r=>{if(r.getCell(8).value==='note')r.getCell(6).value=null;
+        if(r.getCell(8).value==='item'&&!r.hidden)rows.push(r.number);});
+      s.getCell(s.rowCount,6).value={formula:rows.length?`SUM(${rows.map(n=>`F${n}`).join(',')})`:'0',result:0};
+    }
     expect((await decodeProject(await b.xlsx.writeBuffer() as never)).project).toEqual(p);
   });
 });

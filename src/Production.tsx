@@ -20,7 +20,7 @@ export function Production({project,jump}:{project:Project;jump:(issue:Issue)=>v
     setBusy(true);setError('');
     try{
       win.document.write(printWindowHtml(snapshot));win.document.close();
-      const bytes=await encodeContractor(snapshot);downloadFile(bytes,`${snapshot.title||'כתב כמויות'} - לקבלן.xlsx`,'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      const bytes=await encodeContractor(snapshot);downloadFile(bytes,`${snapshot.title||'כתב כמויות'} - כתב כמויות.xlsx`,'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
       await win.document.fonts.ready;for(const img of [...win.document.images])await img.decode().catch(()=>{});
       win.focus();win.print();setMessage('Excel הועבר להורדה וחלון ההדפסה נפתח. בחרו „שמירה כ־PDF”. יש לוודא ששני הקבצים נשמרו; קובץ העבודה נשמר בנפרד.');setMode(null);
     }catch(e){win.close();setError(e instanceof Error?e.message:'ההפקה נכשלה');}finally{setBusy(false);}

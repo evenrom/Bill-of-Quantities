@@ -36,7 +36,7 @@ export function layoutDocument(project:Project) {
   for(const note of notes){if(note.height>400)throw new Error('פסקת הנחיות ארוכה מדי לשורת Excel. יש להפריד לפסקאות.');if(used+note.height>PAGE_HEIGHT-30){introPages.push({entries:[],notes:[]});used=68;}introPages.at(-1)!.notes.push(note);used+=note.height;}
   let start=2+introPages.length;
   const chapters:ChapterLayout[]=project.chapters.map(chapter=>{
-    const rows=chapter.rows.filter(row=>!row.frozen).map(row=>({row,height:Math.max(textHeight(row.description),row.kind==='item'?textHeight(row.unit,35):0)}));
+    const rows=chapter.rows.filter(row=>!row.frozen).map(row=>({row,height:Math.max(textHeight(row.description),textHeight(row.unit,35))}));
     const pages:ChapterPage[]=[{rows:[],used:0}];
     for(let i=0;i<rows.length;i++){
       const entry=rows[i];

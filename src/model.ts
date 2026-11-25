@@ -39,14 +39,20 @@ export function createProject(fields: Partial<Pick<Project, 'title'|'client'|'lo
   };
 }
 export const isNumber = (v: Value): v is number => typeof v === 'number' && Number.isFinite(v) && v >= 0;
+export const isPricedRow = (row:BoqRow) => row.kind==='item'||row.quantity!==null||row.price!==null;
+export const formatDate = (date:string) => date.replace(/^(\d{4})-(\d{2})-(\d{2})$/, '$3/$2/$1');
+export const normalizeDate = (date:string) => date.replace(/^(\d{2})\/(\d{2})\/(\d{4})$/, '$3-$2-$1');
+export function projectUnits(project:Project):string[]{
+  return [...new Set(['מ"ר','מ.א.',"יח'","נק'","קומפ'",...project.chapters.flatMap(c=>c.rows.map(r=>r.unit.trim()))].filter(Boolean))];
+}
 export function rowTotal(row: BoqRow): number | null {
-  if (row.frozen || row.kind === 'note' || !isNumber(row.quantity)) return null;
+  if (row.frozen || !isNumber(row.quantity)) return null;
   if (row.price === 'כלול' || row.price === 'לא רלוונטי') return 0;
   if (!isNumber(row.price)) return null;
   return new Decimal(row.quantity).mul(row.price).toDecimalPlaces(2, Decimal.ROUND_HALF_UP).toNumber();
 }
 export function chapterTotal(chapter: Chapter) {
-  const items = chapter.rows.filter(r=>r.kind==='item'&&!r.frozen);
+  const items = chapter.rows.filter(r=>isPricedRow(r)&&!r.frozen);
   return {value:items.reduce((sum,r)=>sum.add(rowTotal(r) ?? 0),new Decimal(0)).toNumber(), partial:items.some(r=>rowTotal(r)===null)};
 }
 export function numbering(project: Project) {
@@ -73,7 +79,7 @@ export function insertRow(project:Project,chapterId:string,index:number,kind:Boq
   return {...project,chapters:project.chapters.map(c=>c.id===chapterId?{...c,rows:[...c.rows.slice(0,index),row,...c.rows.slice(index)]}:c)};
 }
 export function convertRow(project:Project,chapterId:string,rowId:string,kind:BoqRow['kind']):Project {
-  return {...project,chapters:project.chapters.map(c=>c.id===chapterId?{...c,rows:c.rows.map(r=>r.id===rowId?{...r,kind,...(kind==='note'?{unit:'',quantity:null,price:null}:{})}:r)}:c)};
+  return {...project,chapters:project.chapters.map(c=>c.id===chapterId?{...c,rows:c.rows.map(r=>r.id===rowId?{...r,kind}:r)}:c)};
 }
 export function deleteRow(project:Project,chapterId:string,rowId:string):Project {
   return {...project,chapters:project.chapters.map(c=>c.id===chapterId?{...c,rows:c.rows.filter(r=>r.id!==rowId)}:c)};

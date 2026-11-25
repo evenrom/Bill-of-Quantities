@@ -61,8 +61,7 @@ export function buildImport(plans:SheetPlan[],title:string):{project:Project;war
         if(quantity!==null||price!==null)warnings.push(`${plan.sheet.name}, שורה ${source.number}: נתונים מספריים בשורת כותרת לא ייובאו`);
         continue;
       }
-      if(kind==='note'&&(unit||quantity!==null||price!==null))throw new Error(`${plan.sheet.name}, שורה ${source.number}: הערה מכילה יחידה/כמות/מחיר. יש לבחור סעיף או התעלמות מפורשת.`);
-      chapter.rows.push({id:id(),kind,description,unit:kind==='note'?'':unit,quantity:kind==='note'?null:quantity,price:kind==='note'?null:price});
+      chapter.rows.push({id:id(),kind,description,unit,quantity,price});
     }
     if(ignored)warnings.push(`${plan.sheet.name}: ${ignored} שורות מסומנות להתעלמות`);
     if(unmapped)warnings.push(`${plan.sheet.name}: ${unmapped} שורות מכילות גם מידע בעמודות שאינן ממופות (למשל מספור או סכום); מידע זה אינו מועתק`);

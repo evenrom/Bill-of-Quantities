@@ -15,7 +15,6 @@ describe('approved chain specifications 2026-10-28',()=>{
       'tiling.tileCounterIn':['30×60','3 מ״מ','רובה כחולה'],
       'tiling.tilePublic':['80×80','2 מ״מ','רובה אפורה'],
       'painting.paintWall':['Dunn Edwards Paints DE6374'],
-      'painting.paintWave':['RAL 5012','שמן מט משי'],
       'joinery.counterInner':['18 מ"מ','בירמן 1100'],
       'joinery.counterTop':['במבוק','2 ס״מ','26 ס״מ','15%'],
       'joinery.brandBacking':['40×40','60×20','MDF','RAL 5012'],
@@ -35,7 +34,7 @@ describe('approved chain specifications 2026-10-28',()=>{
     expect(row('bfresh.surfaces.surfaceFascia29').unit).toBe('מ.א.');
   });
   it('keeps Oshi approved finishes distinct and leaves unresolved choices variable',()=>{
-    for(const suffix of ['nJoin','counterTop','counterOuter','backBar'])expect(row(`oshi_oshi.joinery.${suffix}`).description).toContain('1067 GV');
+    for(const suffix of ['nJoinSpecification','counterTop','counterOuter','backBar'])expect(row(`oshi_oshi.joinery.${suffix}`).description).toContain('1067 GV');
     expect(row('oshi_oshi.tiling.tilePublic').description).toContain('120×60');expect(row('oshi_oshi.tiling.tileWork').description).toContain('30×30');
     expect(row('oshi_oshi.painting.paintWall').description).toContain('1537T');
     expect(row('oshi_oshi.painting.paintDecor').description).toContain('440');
@@ -44,11 +43,11 @@ describe('approved chain specifications 2026-10-28',()=>{
       expect(row(`oshi_oshi.metalwork.${suffix}`).description).toContain('RAL 9005');expect(row(`oshi_oshi.metalwork.${suffix}Gold`).description).toContain('RAL 1036');
       expect(row(`oshi_oshi.metalwork.${suffix}Gold`).unit).toBe(row(`oshi_oshi.metalwork.${suffix}`).unit);
     }
-    expect(row('oshi_oshi.tiling.tileCounterIn').description).toContain('{בחירה לפרויקט לפי OS-03}');
-    expect(row('oshi_oshi.tiling.tileWork').description).toContain('{אישור לפרויקט לפי OS-07}');
+    expect(row('oshi_oshi.tiling.tileCounterIn').description).toContain('20×20');
+    expect(row('oshi_oshi.tiling.tileWork').description).toContain('אפוקסית שחורה');
     expect(row('oshi_oshi.painting.paintCeiling').description).not.toContain('0515');
   });
-  for(const [id,oldItems,newItems] of [['bfresh',66,80],['oshi_oshi',83,90]] as const){
+  for(const [id,oldItems,newItems] of [['bfresh',66,77],['oshi_oshi',83,90]] as const){
     it(`${id}: existing saved projects remain unchanged after the base update`,async()=>{
       const bytes=readFileSync(`tests/fixtures/${id}-before-chain-update.xlsx`),{project}=await decodeProject(bytes as never);
       expect(project.chapters.flatMap(c=>c.rows).filter(r=>r.kind==='item')).toHaveLength(oldItems);

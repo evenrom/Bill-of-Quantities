@@ -2,12 +2,12 @@
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import assert from 'node:assert/strict';
 const spec = readFileSync('docs/BOQ_TEMPLATE_SPEC.md', 'utf8');
-const definitions=[['restaurant','מסעדה',22,9,79,23],['kiosk','דוכן',20,6,60,20],['apartment','דירה',16,10,51,16],['private_house','בית פרטי',18,9,60,18],['bfresh','ביפרש',21,7,80,21],['oshi_oshi','אושי־אושי',22,9,90,23]];
+const definitions=[['restaurant','מסעדה',22,9,77,28],['kiosk','דוכן',20,6,60,20],['apartment','דירה',16,10,49,21],['private_house','בית פרטי',18,9,58,23],['bfresh','ביפרש',21,7,77,26],['oshi_oshi','אושי־אושי',22,9,90,28],['residential','מגורים',18,10,58,23]];
 // Optional IDs limit writes, so a chain-only revision cannot rewrite other templates.
 const selected=process.argv.slice(2);
 for(const id of selected)assert.ok(definitions.some(d=>d[0]===id),`Unknown template: ${id}`);
 const templates=definitions.map(([id,name,chapterCount,activeCount,itemCount,noteCount],index)=>{
-const section = spec.split(`## ${index+4} תבנית ${name}`)[1].split(/^## /m)[0];
+const section = spec.split(`## ${id==='residential'?15:index+4} תבנית ${name}`)[1].split(/^## /m)[0];
 const instructions = section.split('### שער והנחיות כלליות')[1].split(/^### /m)[0]
   .split(/\r?\n/).filter(l => /^\d+\. /.test(l)).join('\n');
 const chapters = section.split(/^### /m).slice(1).filter(s => s.includes('מזהה פרק:')).map(s => {
@@ -35,6 +35,6 @@ console.log(name,counts);
 return {id,name:id==='restaurant'?'עסק מסחרי':name,instructions,chapters};
 });
 const sourceIds=templates.flatMap(t=>t.chapters.flatMap(c=>[c.sourceId,...c.rows.map(r=>r.sourceId)]));
-assert.equal(sourceIds.length,660);assert.equal(new Set(sourceIds).size,660);
+assert.equal(sourceIds.length,775);assert.equal(new Set(sourceIds).size,775);
 mkdirSync('src/data',{recursive:true});
 for(const template of templates.filter(t=>t.id!=='kiosk'&&(!selected.length||selected.includes(t.id))))writeFileSync(`src/data/${template.id}.json`,JSON.stringify(template,null,2)+'\n');

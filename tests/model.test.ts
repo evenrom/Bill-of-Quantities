@@ -5,8 +5,8 @@ describe('project model',()=>{
     const p=createProject(),q=createProject();
     expect(p.chapters).toHaveLength(22);
     expect(p.chapters.filter(c=>c.active)).toHaveLength(9);
-    expect(p.chapters.flatMap(c=>c.rows).filter(r=>r.kind==='item')).toHaveLength(79);
-    expect(p.chapters.flatMap(c=>c.rows).filter(r=>r.kind==='note')).toHaveLength(23);
+    expect(p.chapters.flatMap(c=>c.rows).filter(r=>r.kind==='item')).toHaveLength(77);
+    expect(p.chapters.flatMap(c=>c.rows).filter(r=>r.kind==='note')).toHaveLength(28);
     expect(p.chapters[0].id).not.toBe(q.chapters[0].id);
     expect(p.chapters.flatMap(c=>c.rows).every(r=>r.quantity===null&&r.price===null)).toBe(true);
     expect(p.client+p.location+p.revision).toBe('');
