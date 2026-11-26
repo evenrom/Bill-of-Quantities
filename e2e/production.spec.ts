@@ -36,16 +36,18 @@ test('preview, missing-data navigation, separate contractor export and PDF print
   expect(book.getWorksheet('פירוק והריסה')).toBeUndefined();expect(book.getWorksheet('_BOQ_META')!.getCell('C1').value).toBe('contractor');
 });
 
-test('guided external import maps rows and only replaces the editor after review',async({page})=>{
+test('external import opens directly in the editor without importing table headings or totals',async({page})=>{
   const b=new ExcelJS.Workbook(),s=b.addWorksheet('פרק חיצוני');s.addRow(['title']);s.addRow(['סעיף','תיאור','יחידה','כמות','מחיר']);s.addRow([1,'בדיקת ייבוא',"יח'",2,25]);
+  s.addRow([null,'סהכ לעברה-',null,null,null,50]);s.addRow(['סעיף','תיאור עבודה',"יח'",'כמות',"מחיר יח'"]);
   const bytes=Buffer.from(await b.xlsx.writeBuffer());await page.goto('/');
   await page.getByRole('button',{name:'ייבוא מ־Excel',exact:true}).click();
   await page.getByLabel('קובץ לייבוא',{exact:true}).setInputFiles({name:'external.xlsx',mimeType:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',buffer:bytes});
-  await page.getByRole('button',{name:'תצוגת תוצאה לפני אישור',exact:true}).click();
-  await expect(page.getByRole('dialog',{name:'ייבוא מונחה'})).toContainText('בדיקת ייבוא');
-  await page.getByRole('button',{name:'אישור יצירת פרויקט חדש',exact:true}).click();
   await expect(page.getByLabel('תיאור פרק חיצוני, שורה 1',{exact:true})).toHaveValue('בדיקת ייבוא');
   await expect(page.getByLabel('כמות פרק חיצוני, שורה 1',{exact:true})).toHaveValue('2');
+  await expect(page.locator('.chapter tbody textarea')).toHaveCount(1);
+  await expect(page.getByRole('button',{name:'תצוגת תוצאה לפני אישור',exact:true})).toHaveCount(0);
+  await page.getByLabel('תיאור פרק חיצוני, שורה 1',{exact:true}).fill('עריכה ישירה');
+  await expect(page.getByLabel('תיאור פרק חיצוני, שורה 1',{exact:true})).toHaveValue('עריכה ישירה');
 });
 
 test('all chapters enabled still fit A4 including the summary',async({page})=>{
@@ -54,6 +56,24 @@ test('all chapters enabled still fit A4 including the summary',async({page})=>{
   await page.getByRole('button',{name:'תצוגת A4',exact:true}).click();await expect(page.getByRole('dialog',{name:'תצוגת A4',exact:true})).toBeVisible();
   const overflow=await page.locator('.boq-content').evaluateAll(items=>items.flatMap((c,i)=>c.scrollHeight>c.clientHeight+3?[i+1]:[]));
   expect(overflow).toEqual([]);
+});
+
+test('opening an external workbook imports directly and keeps continued chapter content together',async({page})=>{
+  const b=new ExcelJS.Workbook(),s=b.addWorksheet('גיליון1');
+  s.addRow(['סעיף','תיאור עבודה',"יח'",'כמות','מחיר יחידה']);
+  s.addRow([null,'פרק 4 - חשמל']);s.addRow([1,'נקודה ראשונה',"נק'",2,25]);
+  s.addRow([null,'סהכ לעברה-']);s.addRow(['סעיף','תאור עבודה',"יח'",'כמות',"מחיר יח'"]);
+  s.addRow([null,'פרק 4 - חשמל (המשך)']);s.addRow([2,'נקודה שנייה',"נק'",1,30]);
+  const bytes=Array.from(new Uint8Array(await b.xlsx.writeBuffer()));await page.goto('/');
+  await page.evaluate(bytes=>{
+    const file=new File([new Uint8Array(bytes)],'existing.xlsx',{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+    Object.assign(window,{showOpenFilePicker:async()=>[{name:file.name,getFile:async()=>file,requestPermission:async()=>'granted'}]});
+  },bytes);
+  await page.getByRole('button',{name:'המשך פרויקט קיים',exact:true}).click();
+  await expect(page.getByLabel('תיאור חשמל, שורה 1',{exact:true})).toHaveValue('נקודה ראשונה');
+  await expect(page.getByLabel('תיאור חשמל, שורה 2',{exact:true})).toHaveValue('נקודה שנייה');
+  await expect(page.locator('.chapter')).toHaveCount(1);
+  await expect(page.getByRole('dialog')).toHaveCount(0);
 });
 
 test('returned proposal requires review and contractor identity before separate adoption',async({page})=>{

@@ -5,6 +5,28 @@ export interface SourceSheet {name:string;rows:SourceRow[];hidden:boolean}
 export type ImportKind='item'|'note'|'chapter'|'ignore';
 export interface Mapping {description:number;unit:number;quantity:number;price:number;start:number}
 export interface SheetPlan {sheet:SourceSheet;enabled:boolean;title:string;active:boolean;mapping:Mapping;kinds:Record<number,ImportKind>}
+const label=(value:Value|undefined)=>String(value??'').trim().replace(/["'״׳\s:.,־–—\-_/\\()]/g,'');
+function isColumnHeading(value:Value|undefined){return /^(?:תיאור|תאור)(?:העבודה|עבודה)?$/.test(label(value));}
+function isSummary(value:Value|undefined){return /^(?:ריכוזעלויות|ריכוזהעלויות|סיכוםעלויות)$/.test(label(value));}
+function isLayoutLabel(value:Value|undefined){
+  const text=label(value);
+  return isColumnHeading(value)||/^(?:סהכ|סךהכל)(?:(?:חלקי)?(?:ל?ה?עברה|להעברה|לעברה)?|כוללמעמ|לפנימעמ|מעמ)$/.test(text)
+    ||/^סיכום(?:חלקי)?פרק\d*(?:להעברה|לעברה)?$/.test(text)||/^המשךפרק/.test(text);
+}
+export function importPlans(sheets:SourceSheet[]):SheetPlan[]{
+  return sheets.map(sheet=>{
+    const header=sheet.rows.find(r=>r.cells.some(isColumnHeading));
+    const description=header?header.cells.findIndex(isColumnHeading)+1:2;
+    const find=(pattern:RegExp,fallback:number)=>header?Math.max(0,header.cells.findIndex(v=>pattern.test(label(v)))+1):fallback;
+    const mapping:Mapping={description,unit:find(/^(?:יח|יחידה|יחמידה|יחידתמידה)$/,3),quantity:find(/^כמות$/,4),price:find(/^(?:מחיר|מחיריח|מחיריחידה)$/,5),start:1};
+    const firstChapter=sheet.rows.find(r=>/^פרק\s*\d/.test(String(r.cells[description-1]??''))||/^פרק\s*\d/.test(String(r.cells[0]??'')));
+    mapping.start=firstChapter?.number??(header?header.number+1:1);
+    const kinds:Record<number,ImportKind>={};let summary=false;
+    for(const row of sheet.rows){if(row.cells.some(isSummary))summary=true;if(summary)kinds[row.number]='ignore';}
+    return {sheet,enabled:!sheet.hidden&&!/^(?:שער|מקרא.*|ריכוז.*|פרטי מסמך)$/.test(sheet.name),title:sheet.name,active:!sheet.hidden,mapping,kinds};
+  });
+}
+function chapterTitle(text:string){return text.trim().replace(/^פרק\s*\d+(?:[.\-־–—:]|\s)*\s*/,'').replace(/\s*\(?המשך\)?\s*$/,'').trim();}
 function cellValue(cell:ExcelJS.Cell):Value{
   if(cell.isMerged&&cell.master.address!==cell.address)return null;
   const v=cell.value;if(v===null||v===undefined)return null;
@@ -38,6 +60,7 @@ export function suggestKind(row:SourceRow,m:Mapping):ImportKind{
   const desc=String(row.cells[m.description-1]??'').trim();if(!desc)return 'ignore';
   if(['total','heading','columns','spacer'].includes(String(row.cells[7]??'')))return 'ignore';
   if(row.cells[7]==='item'||row.cells[7]==='note')return row.cells[7] as ImportKind;
+  if(isLayoutLabel(desc)||isSummary(desc))return 'ignore';
   if(/^פרק\s*\d/.test(desc)||/^פרק\s*\d/.test(String(row.cells[0]??'')))return 'chapter';
   if(![m.unit,m.quantity,m.price].some(c=>c&&row.cells[c-1]!==null&&row.cells[c-1]!==''&&row.cells[c-1]!==undefined))return 'note';
   return 'item';
@@ -57,7 +80,8 @@ export function buildImport(plans:SheetPlan[],title:string):{project:Project;war
       const description=String(mapped(source,m.description)??'');const unit=String(mapped(source,m.unit)??'');
       const quantity=mapped(source,m.quantity),price=mapped(source,m.price);
       if(kind==='chapter'){
-        if(chapter.rows.length){chapter={id:id(),title:description,active:plan.active,rows:[]};project.chapters.push(chapter);}else chapter.title=description;
+        const title=chapterTitle(description)||chapterTitle(String(source.cells[0]??''))||plan.title;
+        if(chapter.rows.length&&title!==chapter.title){chapter={id:id(),title,active:plan.active,rows:[]};project.chapters.push(chapter);}else chapter.title=title;
         if(quantity!==null||price!==null)warnings.push(`${plan.sheet.name}, שורה ${source.number}: נתונים מספריים בשורת כותרת לא ייובאו`);
         continue;
       }
@@ -66,6 +90,7 @@ export function buildImport(plans:SheetPlan[],title:string):{project:Project;war
     if(ignored)warnings.push(`${plan.sheet.name}: ${ignored} שורות מסומנות להתעלמות`);
     if(unmapped)warnings.push(`${plan.sheet.name}: ${unmapped} שורות מכילות גם מידע בעמודות שאינן ממופות (למשל מספור או סכום); מידע זה אינו מועתק`);
   }
-  if(!project.chapters.some(c=>c.rows.length))throw new Error('לא נבחרו שורות תוכן לייבוא');
+  project.chapters=project.chapters.filter(c=>c.rows.length);
+  if(!project.chapters.length)throw new Error('לא נמצאו שורות תוכן לייבוא');
   return {project,warnings};
 }

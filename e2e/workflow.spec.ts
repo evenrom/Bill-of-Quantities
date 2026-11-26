@@ -89,8 +89,8 @@ test('create, edit, save, reopen, cancel/fail, dirty snapshot and external confl
   await page.getByRole('button',{name:'שמירה',exact:true}).click();
   await expect(page.getByRole('alert')).toContainText('השתנה מחוץ למערכת');
   await page.getByRole('button',{name:'תפריט ראשי',exact:true}).click();await page.getByRole('button',{name:'המשך ללא שמירה',exact:true}).click();await page.getByRole('button',{name:'המשך פרויקט קיים',exact:true}).click();
-  await expect(page.getByRole('dialog')).toContainText('נדרש ייבוא או שחזור מונחה');
-  await page.getByRole('button',{name:'חזרה',exact:true}).click();await page.locator('.home-document summary').click();await page.getByRole('button',{name:'חזרה לעריכה',exact:true}).click();
+  await expect(page.getByRole('dialog')).toContainText('הקובץ אינו XLSX קריא');
+  await page.getByRole('button',{name:'סגירה',exact:true}).click();await page.locator('.home-document summary').click();await page.getByRole('button',{name:'חזרה לעריכה',exact:true}).click();
   await expect(description).toHaveValue('שינוי מקומי נוסף');
   expect(errors).toEqual([]);expect(external).toEqual([]);
 });

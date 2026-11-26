@@ -122,7 +122,7 @@ function App() {
     if(action!=='open'&&action!=='openTemplate'){setCreationAction(action);setCreate(true);return;}
     busyRef.current=true;setBusy(true);setError('');setNotice('');
     try{const result=await openFile();if(action==='openTemplate'&&result.project.kind!=='template')throw new Error('יש לבחור קובץ תבנית');install(result.project,result.name,result.binding,true);setWarnings(result.warnings);}
-    catch(e){if(e instanceof RecoveryRequired){setRecovery(e.message);setRecoveryFile(e.sourceFile??null);}else if(!isCancelled(e))setError(e instanceof Error?e.message:'הפתיחה נכשלה');}
+    catch(e){if(e instanceof RecoveryRequired){if(e.sourceFile)setImportFile(e.sourceFile);else{setRecovery(e.message);setRecoveryFile(null);}}else if(!isCancelled(e))setError(e instanceof Error?e.message:'הפתיחה נכשלה');}
     finally{busyRef.current=false;setBusy(false);}
   }
   function request(action:Action){if(busyRef.current)return;if(dirty&&!home)setPending(action);else void perform(action);}
